@@ -58,39 +58,94 @@
     padding-bottom: 16px;
     margin-bottom: 24px;
   }
-  .header h1 {
-    margin: 0 0 4px;
-    font-size: 26px;
+  .header .scenario-caption {
+    color: var(--magenta);
     font-weight: 700;
-    color: var(--navy);
-    letter-spacing: -0.2px;
+    font-size: 13px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .header .scenario-caption[data-scenario="back"] {
+    color: var(--good);
+  }
+  .header h1 {
+    margin: 0 0 6px;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.3px;
   }
   .header .subtitle {
     margin: 0;
     color: var(--ink-soft);
     font-size: 14px;
   }
-  .brand-mark {
+
+  /* TETP brand block (top right) */
+  .tetp-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+  }
+  .tetp-shield {
+    width: 56px;
+    height: 64px;
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px 6px 28px 28px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    border: 1.5px solid var(--copper);
+    font-weight: 800;
+    letter-spacing: 1px;
+    position: relative;
+  }
+  .tetp-shield::after {
+    content: '';
+    position: absolute;
+    top: -4px; left: 6px; right: 6px;
+    height: 3px;
+    background: var(--magenta);
+    border-radius: 2px;
+  }
+  .tetp-shield-inner { font-size: 13px; }
+  .tetp-brand-text {
+    line-height: 1.2;
+  }
+  .tetp-en {
     color: var(--navy);
+    font-size: 11px;
     font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1.2px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
   }
-  .brand-mark .dot {
-    width: 14px; height: 14px;
-    background: var(--magenta);
-    border-radius: 50%;
-    display: inline-block;
+
+  /* footer line */
+  .footer-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .footer-line .source { font-weight: 600; }
+  .footer-line .restricted {
+    color: var(--magenta);
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
 
   /* ===== Scenario tabs ===== */
   .scenario-tabs {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin-bottom: 22px;
   }
@@ -167,13 +222,13 @@
   }
   .panel-body { padding: 22px 26px 28px; }
 
-  /* ===== JPME header bar — proportions match rank phases:
-         Level 1 (Cadet 20%), Level 2 (Lt+1stLt+Capt 60%), Level 3 (Major 20%) ===== */
+  /* ===== JPME header bar — proportions match rank phases on a 25-yr timeline:
+         Level 1 (Cadet 16%), Level 2 (Lt → Major, 68%), Level 3 (Lt Col 16%) ===== */
   .jpme-bar {
     display: grid;
-    grid-template-columns: 20% 60% 20%;
+    grid-template-columns: 16% 68% 16%;
     gap: 4px;
-    margin-left: 160px; /* offsets for left label column */
+    margin-left: 160px;
     margin-bottom: 6px;
   }
   .jpme-cell {
@@ -378,6 +433,12 @@
     grid-template-columns: 1.3fr 1fr;
     gap: 18px;
   }
+  .implications.benefits-only,
+  .implications.warnings-only {
+    grid-template-columns: 1fr;
+  }
+  .implications.benefits-only .impl-card.warnings { display: none; }
+  .implications.warnings-only .impl-card.benefits { display: none; }
   .impl-card {
     background: var(--white);
     border-radius: 10px;
@@ -437,97 +498,6 @@
     font-weight: 500;
   }
 
-  /* ===== Highlights bar ===== */
-  .highlights {
-    background: var(--navy);
-    color: var(--white);
-    border-radius: 10px;
-    padding: 18px 22px;
-    margin-top: 22px;
-    display: grid;
-    grid-template-columns: 160px 1fr 1fr 1fr;
-    gap: 18px;
-    align-items: center;
-  }
-  .highlights .h-label {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    line-height: 1.25;
-  }
-  .highlights .h-card {
-    background: rgba(255,255,255,0.08);
-    border-left: 3px solid var(--magenta);
-    padding: 12px 14px;
-    border-radius: 4px;
-    font-size: 13.5px;
-    line-height: 1.4;
-  }
-  .highlights .h-card strong { color: #ffd6e3; }
-
-  /* ===== SPME Reference panel ===== */
-  .spme-panel { margin-top: 22px; }
-  .spme-banner {
-    background: var(--magenta);
-    color: var(--white);
-    text-align: center;
-    padding: 8px;
-    font-style: italic;
-    font-weight: 700;
-    border-radius: 8px 8px 0 0;
-    letter-spacing: 0.4px;
-  }
-  .spme-grid {
-    background: var(--white);
-    border-radius: 0 0 8px 8px;
-    padding: 18px;
-    box-shadow: 0 2px 10px rgba(20,24,60,0.06);
-  }
-  .spme-row {
-    display: grid;
-    grid-template-columns: 110px repeat(5, 1fr) 0.4fr;
-    gap: 6px;
-    margin-bottom: 6px;
-  }
-  .spme-row .row-name {
-    font-weight: 700;
-    color: var(--navy);
-    font-size: 12.5px;
-    align-self: center;
-    padding-left: 4px;
-  }
-  .arrow-cell {
-    background: var(--copper-soft);
-    color: var(--ink);
-    padding: 12px 18px 12px 14px;
-    font-weight: 700;
-    font-size: 13px;
-    position: relative;
-    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
-  }
-  .arrow-cell.darker  { background: var(--copper); color: var(--white); }
-  .arrow-cell.darkest { background: var(--copper-deep); color: var(--white); }
-  .arrow-cell.muted   { background: #e6d4b8; color: #8a6d44; }
-  .arrow-cell.fade    { background: #f0e3cf; color: #ad9377; }
-
-  .spme-courses {
-    display: grid;
-    grid-template-columns: 110px repeat(5, 1fr) 0.4fr;
-    gap: 6px;
-    margin-top: 4px;
-  }
-  .course-cell {
-    background: #f7eedc;
-    border-radius: 4px;
-    padding: 12px 10px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink);
-    line-height: 1.25;
-  }
-
   /* tooltip */
   .tooltip {
     position: fixed;
@@ -578,7 +548,6 @@
 
   @media (max-width: 1100px) {
     .implications { grid-template-columns: 1fr; }
-    .highlights { grid-template-columns: 1fr; }
     .scenario-tabs { grid-template-columns: 1fr; }
   }
 </style>
@@ -589,31 +558,31 @@
   <!-- HEADER -->
   <div class="header">
     <div>
-      <div class="brand-mark"><span class="dot"></span> Course Pathway Analysis</div>
-      <h1>JPME &amp; Service Training — Rank Sequencing Comparison</h1>
-      <p class="subtitle">Compare current course timing with proposed rank shifts to identify collisions, prerequisite gaps, and operational impacts.</p>
+      <div class="scenario-caption" id="scenarioCaption">Current State</div>
+      <h1 id="pageTitle">Current Land Officer PME Pathway</h1>
+      <p class="subtitle">Interactive comparison: current pathway vs. shifting courses one rank earlier or later. Hover any course for details.</p>
     </div>
-    <div class="brand-mark" style="font-size: 11px; opacity: 0.75;">
-      Interactive&nbsp;Model&nbsp;·&nbsp;v1.0
+    <div class="tetp-brand">
+      <div class="tetp-shield">
+        <span class="tetp-shield-inner">TETP</span>
+      </div>
+      <div class="tetp-brand-text">
+        <div class="tetp-en">Training and Education<br/>Transformation Programme</div>
+      </div>
     </div>
   </div>
 
   <!-- SCENARIO TABS -->
   <div class="scenario-tabs" id="tabs">
     <div class="tab active" data-scenario="current">
-      <div class="tab-label">Scenario 01</div>
+      <div class="tab-label">View 01</div>
       <div class="tab-title">Current State</div>
       <div class="tab-desc">As-is delivery of all JPME and Service courses across the rank progression.</div>
     </div>
     <div class="tab" data-scenario="back">
-      <div class="tab-label">Scenario 02</div>
-      <div class="tab-title">Shift Back One Rank</div>
-      <div class="tab-desc">Each course delivered one rank earlier — accelerates leadership prep.</div>
-    </div>
-    <div class="tab" data-scenario="forward">
-      <div class="tab-label">Scenario 03</div>
-      <div class="tab-title">Shift Forward One Rank</div>
-      <div class="tab-desc">Each course delivered one rank later — preserves operational time at junior ranks.</div>
+      <div class="tab-label">View 02</div>
+      <div class="tab-title">Proposed Pathway</div>
+      <div class="tab-desc">Service courses pushed back one rank — surfaces coverage gaps and concurrency.</div>
     </div>
   </div>
 
@@ -632,26 +601,28 @@
         <div class="jpme-cell">JPME Level 3</div>
       </div>
 
-      <!-- Rank ribbon with year segments. Positions are proportional to the
-           20-year career timeline so course tiles line up with rank phases:
-             Cadet 0-20%, Lt 20-35%, 1st Lt 35-55%, Capt 55-80%, Major 80-100%. -->
+      <!-- Rank ribbon proportional to a 25-year career:
+             Cadet 0-16%, Lt 16-28%, 1st Lt 28-44%, Capt 44-64%, Major 64-84%, Lt Col 84-100%. -->
       <div class="rank-ribbon" id="rankRibbon">
-        <span class="rank-segment-label" style="left: 10%;">~4 years</span>
-        <span class="rank-segment-label" style="left: 27.5%;">~3 years</span>
-        <span class="rank-segment-label" style="left: 45%;">~4 years</span>
-        <span class="rank-segment-label" style="left: 67.5%;">~5 years</span>
-        <span class="rank-segment-label" style="left: 90%;">~4 years</span>
-        <div class="rank-marker" style="left: 20%;"></div>
-        <div class="rank-marker" style="left: 35%;"></div>
-        <div class="rank-marker" style="left: 55%;"></div>
-        <div class="rank-marker" style="left: 80%;"></div>
+        <span class="rank-segment-label" style="left: 8%;">~3-4 years</span>
+        <span class="rank-segment-label" style="left: 22%;">~3 years</span>
+        <span class="rank-segment-label" style="left: 36%;">~4 years</span>
+        <span class="rank-segment-label" style="left: 54%;">~5 years</span>
+        <span class="rank-segment-label" style="left: 74%;">~5 years</span>
+        <span class="rank-segment-label" style="left: 92%;">~4 years</span>
+        <div class="rank-marker" style="left: 16%;"></div>
+        <div class="rank-marker" style="left: 28%;"></div>
+        <div class="rank-marker" style="left: 44%;"></div>
+        <div class="rank-marker" style="left: 64%;"></div>
+        <div class="rank-marker" style="left: 84%;"></div>
       </div>
 
       <div class="rank-names">
-        <span class="rank-name" style="left: 20%;">Lieutenant</span>
-        <span class="rank-name" style="left: 35%;">1st Lieutenant</span>
-        <span class="rank-name" style="left: 55%;">Captain</span>
-        <span class="rank-name" style="left: 80%;">Major</span>
+        <span class="rank-name" style="left: 16%;">Lieutenant</span>
+        <span class="rank-name" style="left: 28%;">1st Lieutenant</span>
+        <span class="rank-name" style="left: 44%;">Captain</span>
+        <span class="rank-name" style="left: 64%;">Major</span>
+        <span class="rank-name" style="left: 84%;">Lt Col</span>
       </div>
 
       <!-- Joint Education row -->
@@ -683,7 +654,7 @@
   </div>
 
   <!-- IMPLICATIONS -->
-  <div class="implications">
+  <div class="implications" id="implications">
     <div class="impl-card warnings">
       <div class="card-header">⚠ Risks &amp; Implications</div>
       <div class="card-body">
@@ -698,53 +669,10 @@
     </div>
   </div>
 
-  <!-- KEY HIGHLIGHTS -->
-  <div class="highlights" id="highlights">
-    <div class="h-label">KEY<br/>HIGHLIGHTS</div>
-    <div class="h-card" id="hl1"></div>
-    <div class="h-card" id="hl2"></div>
-    <div class="h-card" id="hl3"></div>
-  </div>
-
-  <!-- SPME REFERENCE -->
-  <div class="spme-panel">
-    <div class="spme-banner">No official SPME Levels</div>
-    <div class="spme-grid">
-      <div class="spme-row">
-        <div class="row-name">SPME Levels</div>
-        <div class="arrow-cell">Level 1</div>
-        <div class="arrow-cell darker" style="grid-column: span 2;">Level 2</div>
-        <div class="arrow-cell darkest">Level 3</div>
-        <div class="arrow-cell fade">…</div>
-        <div></div>
-      </div>
-      <div class="spme-row">
-        <div class="row-name">Rank</div>
-        <div class="arrow-cell">CADET</div>
-        <div class="arrow-cell darker">LIEUTENANT</div>
-        <div class="arrow-cell darker">FIRST LIEUTENANT</div>
-        <div class="arrow-cell darkest">CAPTAIN</div>
-        <div class="arrow-cell darkest">MAJOR</div>
-        <div class="arrow-cell fade">…</div>
-      </div>
-      <div class="spme-row">
-        <div class="row-name">Time (yrs)</div>
-        <div class="arrow-cell muted">0 → 4</div>
-        <div class="arrow-cell muted">4 → 7</div>
-        <div class="arrow-cell muted">7 → 11</div>
-        <div class="arrow-cell muted">11 → 16</div>
-        <div class="arrow-cell muted">16 → 20</div>
-        <div class="arrow-cell fade">…</div>
-      </div>
-      <div class="spme-courses">
-        <div class="row-name">Courses</div>
-        <div class="course-cell">Commissioning Course</div>
-        <div class="course-cell" style="grid-column: span 2;">Trade-specific Platoon Commander &amp; Service-specific courses</div>
-        <div class="course-cell">Company Commander Course</div>
-        <div class="course-cell">Battalion Commander Course</div>
-        <div></div>
-      </div>
-    </div>
+  <!-- FOOTER LINE -->
+  <div class="footer-line">
+    <span class="source">Source: TETP</span>
+    <span class="restricted">Restricted Access</span>
   </div>
 
 </div>
@@ -755,16 +683,17 @@
 /* ============================================================
    COURSE PATHWAY MODEL
    ------------------------------------------------------------
-   Coordinate system:  x is "career month" 0 → 240 (Cadet to Major end).
+   Coordinate system:  x is "career month" 0 → 300 (Cadet to Lt Col).
    Rank phases (in months from career start):
      Cadet:           0   – 48   (years 0-4)   [JPME L1]
      Lieutenant:      48  – 84   (years 4-7)
      1st Lieutenant:  84  – 132  (years 7-11)
      Captain:         132 – 192  (years 11-16)
-     Major:           192 – 240  (years 16-20)  [JPME L3 begins late]
+     Major:           192 – 252  (years 16-21)
+     Lt Col:          252 – 300  (years 21-25) [JPME L3]
    ============================================================ */
 const TIMELINE_START = 0;
-const TIMELINE_END   = 240;   // months
+const TIMELINE_END   = 300;   // months
 const M = (yrs) => yrs * 12;
 
 const RANK_PHASES = {
@@ -772,167 +701,93 @@ const RANK_PHASES = {
   lt:       { start: M(4),   end: M(7)  },
   firstLt:  { start: M(7),   end: M(11) },
   capt:     { start: M(11),  end: M(16) },
-  major:    { start: M(16),  end: M(20) }
+  major:    { start: M(16),  end: M(21) },
+  ltCol:    { start: M(21),  end: M(25) }
 };
 
 /* COURSES — each scenario shifts start anchors by ~3-5 years */
 const SCENARIOS = {
   current: {
-    title: 'Current State',
-    pill:  'Cadet → Major',
+    title: 'Current Land Officer PME Pathway',
+    pill:  'Cadet → Lt Col',
     joint: [
-      { id:'ipc-j',  name:'Indirect Pathway Course',          start:M(0.5),  end:M(3.5),  duration:'~3 years' },
-      { id:'jpme2a', name:'JPME Level 2 Course A',            start:M(8.0),  end:M(8.25), duration:'~3 weeks', anchor:'1st Lt' },
-      { id:'jpme2b', name:'JPME Level 2 Course B',            start:M(16.5), end:M(16.75),duration:'~3 weeks', anchor:'Major' },
-      { id:'jcsc',   name:'Joint Command and Staff College',  start:M(19.0), end:M(19.8), duration:'~40 weeks', anchor:'Major / JPME L3' }
+      { id:'ipc-j',  name:'Indirect Pathway Course',                   start:M(0.5),  end:M(3.5),  duration:'~3 years',  anchor:'Cadet' },
+      { id:'jbc',    name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
+      { id:'jac',    name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
+      { id:'jcsc',   name:'Joint Command and Staff College',           start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col / JPME L3' }
     ],
     service: [
       { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
       { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.5),  duration:'~1 year',   anchor:'Lt entry' },
-      { id:'plt',  name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
-      { id:'coy',  name:'Company Commander Course',  start:M(11.5), end:M(11.95),duration:'~22 weeks', anchor:'Captain' },
-      { id:'bn',   name:'Battalion Commander Course',start:M(17.0), end:M(17.45),duration:'~23 weeks', anchor:'Major' }
+      { id:'plt',  name:'Platoon Commander Course',  start:M(4.5),  end:M(4.8),  duration:'~12 weeks', anchor:'Lieutenant' },
+      { id:'coy',  name:'Company Commander Course',  start:M(15.0), end:M(15.42),duration:'~22 weeks', anchor:'Captain (late)' },
+      { id:'bn',   name:'Battalion Commander Course',start:M(20.0), end:M(20.44),duration:'~23 weeks', anchor:'Major (late)' }
     ],
     gaps: [
-      { row:'service', start:M(5.0),  end:M(11.5), label:'~6 years operational duty' },
-      { row:'service', start:M(11.95),end:M(17.0), label:'~5 years operational duty' },
-      { row:'joint',   start:M(8.25), end:M(16.5), label:'~8 years between joint touchpoints' }
+      { row:'service', start:M(4.8),  end:M(15.0), label:'Time spent in unit' },
+      { row:'service', start:M(15.42),end:M(20.0), label:'Time spent in unit' }
     ],
-    warnings: [
-      { title:'Long gap between JPME Level 2 A and B',
-        meta:'~8 years between joint touchpoints risks knowledge decay before Course B.' },
-      { title:'Wide operational gap before Battalion Course',
-        meta:'~5 years between Company and Battalion Commander Courses; readiness depends on individual postings.' },
-      { title:'Joint Command &amp; Staff College compressed late in career',
-        meta:'40-week course collides with Major-rank operational responsibilities.' }
-    ],
+    /* Current state: only benefits, no implications/risks. */
+    warnings: [],
     benefits: [
-      { title:'Each course aligned to its own rank',
-        meta:'Officers gain command experience appropriate to their level before next course.' },
-      { title:'Hybrid delivery already minimises time away from units',
-        meta:'Per slide guidance: hybrid model preserves operational presence.' },
-      { title:'Preserves jointery in Joint Courses',
-        meta:'JPME courses delivered in joint environment — multi-service exposure built in.' }
+      { title:'Proper distribution of courses across the continuum',
+        meta:'Joint and service courses balanced from Cadet to Lt Col — no rank carries the entire training burden, and progression is paced.' },
+      { title:'Battalion Commander Course taken right before JCSC',
+        meta:'Graduating from JCSC qualifies officers to assume Battalion Commander appointments — sequencing aligns formal qualification with role assumption.' },
+      { title:'Each command course aligned to its appropriate rank',
+        meta:'Plt Cmd at Lt, Coy Cmd at Capt, Bn Cmd at Major — officers complete each course at the rank where they will exercise that level of command.' },
+      { title:'Three joint education touchpoints across the career',
+        meta:'JBC at 1st Lieutenant, JAC at Major, JCSC at Lt Col — progressive joint exposure from junior to senior leadership.' },
+      { title:'Substantial time in unit between courses',
+        meta:'Officers spend ~10 years at unit between Plt Cmd and Coy Cmd, building operational expertise before the next formal course.' },
+      { title:'Hybrid delivery minimises time away from units',
+        meta:'Course delivery model preserves operational presence and unit cohesion while completing required education.' }
     ],
     highlights: [
-      { html:'<strong>2 new Joint Courses</strong> close joint-education gaps at junior and mid-career levels.' },
+      { html:'<strong>2 new Joint Courses</strong> (JBC &amp; JAC) close joint-education gaps at junior and mid-career levels.' },
       { html:'Delivered in a <strong>joint environment</strong> to preserve jointery across services.' },
       { html:'<strong>Hybrid delivery</strong> minimises time away from units.' }
     ]
   },
 
-  /* Shift each course back one rank (~ -3 to -5 years).
-     Course start/end values below are calibrated so any pair listed in
-     `collisions` is an actual time overlap on the timeline. */
+  /* Proposed pathway: service courses pushed back by one rank.
+     Coy Cmd moves from Capt → 1st Lt; Bn Cmd moves from late Major → early Major.
+     Joint courses keep their current-state positions for comparison. */
   back: {
-    title: 'Scenario — Shift Back One Rank',
-    pill:  'Earlier delivery (-1 rank)',
+    title: 'Proposed Land Officer PME Pathway',
+    pill:  'Service courses pushed back one rank',
     joint: [
-      { id:'ipc-j',  name:'Indirect Pathway Course',         start:M(0.5),  end:M(3.5),  duration:'~3 years' },
-      { id:'jpme2a', name:'JPME Level 2 Course A',           start:M(5.2),  end:M(5.45), duration:'~3 weeks', anchor:'Lieutenant' },
-      { id:'jpme2b', name:'JPME Level 2 Course B',           start:M(13.10),end:M(13.35),duration:'~3 weeks', anchor:'Captain'    },
-      { id:'jcsc',   name:'Joint Command and Staff College', start:M(15.0), end:M(15.8), duration:'~40 weeks', anchor:'Captain → Major' }
+      { id:'ipc-j', name:'Indirect Pathway Course',                   start:M(0.5),  end:M(3.5),  duration:'~3 years',  anchor:'Cadet' },
+      { id:'jbc',   name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
+      { id:'jac',   name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
+      { id:'jcsc',  name:'Joint Command and Staff College',           start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col / JPME L3' }
     ],
     service: [
       { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
-      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(2.5),  end:M(3.5),  duration:'~1 year',   anchor:'Cadet (late)' },
-      { id:'plt',  name:'Platoon Commander Course',  start:M(2.7),  end:M(3.0),  duration:'~12 weeks', anchor:'Cadet (late)' },
-      { id:'coy',  name:'Company Commander Course',  start:M(7.5),  end:M(7.95), duration:'~22 weeks', anchor:'1st Lieutenant' },
-      { id:'bn',   name:'Battalion Commander Course',start:M(13.0), end:M(13.45),duration:'~23 weeks', anchor:'Captain' }
+      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.5),  duration:'~1 year',   anchor:'Lt entry' },
+      { id:'plt',  name:'Platoon Commander Course',  start:M(4.5),  end:M(4.8),  duration:'~12 weeks', anchor:'Lieutenant' },
+      { id:'coy',  name:'Company Commander Course',  start:M(8.0),  end:M(8.42), duration:'~22 weeks', anchor:'1st Lieutenant' },
+      { id:'bn',   name:'Battalion Commander Course',start:M(17.0), end:M(17.44),duration:'~23 weeks', anchor:'Major (early)' }
     ],
     gaps: [
-      { row:'service', start:M(3.5), end:M(7.5),  label:'~4 years before Company Course' },
-      { row:'service', start:M(7.95),end:M(13.0), label:'~5 years before Battalion Course' }
+      { row:'service', start:M(4.8),  end:M(8.0),  label:'~3 years' },
+      { row:'service', start:M(8.42), end:M(17.0), label:'~6 years' },
+      { row:'service', start:M(17.44),end:M(21.5), label:'~5 years' }
     ],
-    /* All pairs below correspond to real time overlaps on the tracks. */
-    collisions: [
-      ['ipc-s','ipc-j'],      // Service Indirect 2.5-3.5 vs Joint Indirect 0.5-3.5 → overlap
-      ['plt','dpc'],          // Plt Cmd 2.7-3.0 inside Direct Pathway 0-3
-      ['plt','ipc-j'],        // Plt Cmd 2.7-3.0 inside Joint Indirect 0.5-3.5
-      ['plt','ipc-s'],        // Plt Cmd 2.7-3.0 inside Service Indirect 2.5-3.5
-      ['bn','jpme2b']         // Bn Cmd 13.0-13.45 contains JPME L2-B 13.10-13.35
-    ],
+    /* No time overlaps to flag — implications are about same-rank concurrency
+       and misalignment, not direct time collisions. */
+    collisions: [],
     warnings: [
-      { title:'Platoon Commander Course collides with Direct Pathway Course',
-        meta:'Cadets cannot commission and command a platoon simultaneously — direct timeline conflict.' },
-      { title:'Joint &amp; Service Indirect Pathway Courses overlap',
-        meta:'Two ~1-3 year programmes running in parallel during cadetship is operationally infeasible.' },
-      { title:'Insufficient experience before Company Commander Course',
-        meta:'Officers reach Company Cmd at 1st Lt with ~3 years post-commissioning vs. ~7 today.' },
-      { title:'Battalion Commander Course at Captain rank',
-        meta:'Officers command battalions before reaching Major — prerequisite mismatch with appointment ranks.' },
-      { title:'JPME L2 Course B collides with Battalion Commander Course',
-        meta:'Two cohort-based courses competing for Captain-rank officers in the same window.' },
-      { title:'Joint C&amp;SC (40 weeks) lands during Battalion Cmd preparation',
-        meta:'Major operational courses stacked — significant time-away pressure on units.' }
+      { title:'Coverage Gaps Emerge',
+        meta:'No service or joint courses delivered between 1st Lieutenant – Captain &amp; Major – Lt Colonel — long stretches without formal development.' },
+      { title:'Concurrent Course Load',
+        meta:'The key joint and service courses are delivered at the same rank — JBC alongside Coy Cmd at 1st Lt, JAC alongside Bn Cmd at Major.' },
+      { title:'Battalion Course Misaligned',
+        meta:'Battalion command requires JCSC (Lt Col), so the Battalion course sits too early — qualification-then-appointment chain is broken.' }
     ],
-    benefits: [
-      { title:'Earlier exposure to joint education',
-        meta:'JPME Level 2 reaches officers at Lt rather than 1st Lt — earlier joint mindset.' },
-      { title:'Compressed pathway to senior leadership',
-        meta:'Officers complete Battalion Cmd ~5 years earlier — faster command pipeline if collisions resolved.' },
-      { title:'Reduced knowledge decay between joint touchpoints',
-        meta:'Gap between JPME L2 A and B drops from ~8 years to ~6 years.' }
-    ],
-    highlights: [
-      { html:'<strong>Collisions appear at every rank</strong> — Cadet, Lt, and Captain phases all show overlapping courses.' },
-      { html:'<strong>Prerequisite risk</strong> — officers attend command courses before holding the corresponding appointment.' },
-      { html:'<strong>Acceleration potential</strong> only realised if course durations and entry standards are revised.' }
-    ]
-  },
-
-  /* Shift each course forward one rank (~ +3-4 years).
-     Calibrated so flagged collisions are real time overlaps. */
-  forward: {
-    title: 'Scenario — Shift Forward One Rank',
-    pill:  'Later delivery (+1 rank)',
-    joint: [
-      { id:'ipc-j',  name:'Indirect Pathway Course',         start:M(3.5),  end:M(6.5),  duration:'~3 years', anchor:'Lt → 1st Lt' },
-      { id:'jpme2a', name:'JPME Level 2 Course A',           start:M(16.60),end:M(16.85),duration:'~3 weeks', anchor:'Major (early)' },
-      { id:'jpme2b', name:'JPME Level 2 Course B',           start:M(19.55),end:M(19.70),duration:'~3 weeks', anchor:'late Major' }
-      /* JCSC pushed beyond visible timeline (post-Major) */
-    ],
-    service: [
-      { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
-      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(7.5),  end:M(8.5),  duration:'~1 year',   anchor:'1st Lt' },
-      { id:'plt',  name:'Platoon Commander Course',  start:M(8.7),  end:M(9.0),  duration:'~12 weeks', anchor:'1st Lieutenant' },
-      { id:'coy',  name:'Company Commander Course',  start:M(16.5), end:M(16.95),duration:'~22 weeks', anchor:'Major' },
-      { id:'bn',   name:'Battalion Commander Course',start:M(19.5), end:M(19.95),duration:'~23 weeks', anchor:'late Major' }
-    ],
-    gaps: [
-      { row:'service', start:M(3),    end:M(7.5),  label:'~4.5 years pre-IPC' },
-      { row:'service', start:M(9.0),  end:M(16.5), label:'~7.5 years to Company Course' },
-      { row:'service', start:M(16.95),end:M(19.5), label:'~2.5 years' }
-    ],
-    /* All pairs below correspond to real time overlaps on the tracks. */
-    collisions: [
-      ['coy','jpme2a'],       // Coy Cmd 16.5-16.95 contains JPME 2A 16.60-16.85
-      ['bn','jpme2b']         // Bn Cmd 19.5-19.95 contains JPME 2B 19.55-19.70
-    ],
-    warnings: [
-      { title:'Platoon Cmd Course delayed to 1st Lieutenant',
-        meta:'Officers lead platoons for ~3 years before formal training — risk to junior unit performance.' },
-      { title:'Company &amp; Battalion Commander courses compressed into Major rank',
-        meta:'Both senior command courses land in a 4-year window — minimal recovery time between them.' },
-      { title:'Joint Command &amp; Staff College pushed beyond Major',
-        meta:'JPME Level 3 falls outside the standard 20-year window — late-career strategic exposure.' },
-      { title:'Company Commander Course overlaps JPME Level 2 A',
-        meta:'Captain-rank officers face two competing course commitments simultaneously.' }
-    ],
-    benefits: [
-      { title:'Maximum operational time at junior ranks',
-        meta:'Lieutenants accumulate 3-4 years of platoon experience before formal courses.' },
-      { title:'Greater experience base entering each course',
-        meta:'Officers join Company Cmd Course as Majors — significant unit-level command background.' },
-      { title:'Reduced collision at junior ranks',
-        meta:'Cadet and Lt phases free of competing course commitments.' }
-    ],
-    highlights: [
-      { html:'<strong>Operational presence preserved</strong> — junior officers stay in units longer before courses.' },
-      { html:'<strong>Senior-rank congestion</strong> — Major rank carries two command courses + JPME L2-B.' },
-      { html:'<strong>JPME Level 3 deferred</strong> — Joint Command &amp; Staff College sits outside the displayed window.' }
-    ]
+    benefits: []
   }
+
 };
 
 /* ============================================================
@@ -1010,21 +865,29 @@ function renderImplications(scenario) {
   });
 }
 
-function renderHighlights(scenario) {
-  const els = ['hl1','hl2','hl3'].map(id => document.getElementById(id));
-  els.forEach((el,i) => {
-    el.innerHTML = scenario.highlights[i] ? scenario.highlights[i].html : '';
-  });
-}
+const SCENARIO_CAPTION = {
+  current: 'Current State',
+  back:    'Proposed Pathway'
+};
 
 function applyScenario(key) {
   const sc = SCENARIOS[key];
-  document.getElementById('timelineTitle').textContent = 'Course Timeline — ' + sc.title;
+  document.getElementById('timelineTitle').textContent = 'Course Timeline';
   document.getElementById('timelinePill').textContent = sc.pill;
+  document.getElementById('pageTitle').textContent = sc.title;
+  const caption = document.getElementById('scenarioCaption');
+  caption.textContent = SCENARIO_CAPTION[key] || '';
+  caption.dataset.scenario = key;
   renderTrack(document.getElementById('jointTrack'),   sc.joint,   sc.gaps, sc.collisions, 'joint');
   renderTrack(document.getElementById('serviceTrack'), sc.service, sc.gaps, sc.collisions, 'service');
   renderImplications(sc);
-  renderHighlights(sc);
+
+  // hide whichever panel has no items
+  const implEl = document.getElementById('implications');
+  const benefitsOnly = !sc.warnings || sc.warnings.length === 0;
+  const warningsOnly = !sc.benefits || sc.benefits.length === 0;
+  implEl.classList.toggle('benefits-only', benefitsOnly && !warningsOnly);
+  implEl.classList.toggle('warnings-only', warningsOnly && !benefitsOnly);
 
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.scenario === key);
