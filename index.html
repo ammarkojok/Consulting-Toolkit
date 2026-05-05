@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Course Pathway Analysis — JPME &amp; Service Training</title>
+<title>Course Pathway Analysis | JPME &amp; Service Training</title>
 <style>
   /* ===== Brand palette ===== */
   :root {
@@ -231,11 +231,11 @@
   }
   .panel-body { padding: 22px 26px 28px; }
 
-  /* ===== JPME header bar — proportions match rank phases on a 25-yr timeline:
-         Level 1 (Cadet 16%), Level 2 (Lt → Major, 68%), Level 3 (Lt Col 16%) ===== */
+  /* ===== JPME header bar — proportions on 25-yr timeline:
+         Level 1 (Cadet 16%), Level 2 (Lt to Capt 48%), Level 3 (Major to Lt Col 36%) ===== */
   .jpme-bar {
     display: grid;
-    grid-template-columns: 16% 68% 16%;
+    grid-template-columns: 16% 48% 36%;
     gap: 4px;
     margin-left: 160px;
     margin-bottom: 6px;
@@ -385,23 +385,23 @@
   /* course tile */
   .course {
     position: absolute;
-    top: 14px;
-    bottom: 14px;
-    border-radius: 6px;
-    padding: 6px 8px;
+    top: 12px;
+    bottom: 12px;
+    border-radius: 8px;
+    padding: 8px 6px;
     color: var(--ink);
-    font-size: 11.5px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     line-height: 1.18;
     overflow: hidden;
     cursor: pointer;
-    transition: left 0.55s cubic-bezier(.4,0,.2,1),
-                width 0.55s cubic-bezier(.4,0,.2,1),
+    transition: left 0.6s cubic-bezier(.4,0,.2,1),
+                width 0.6s cubic-bezier(.4,0,.2,1),
                 opacity 0.35s ease,
                 transform 0.18s ease,
                 box-shadow 0.18s ease,
                 outline-color 0.18s ease;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.10);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -409,19 +409,27 @@
   }
   .course .course-name {
     display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-wrap: break-word;
-    hyphens: auto;
     width: 100%;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    white-space: normal;
+    hyphens: none;
   }
   .course:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0,0,0,0.22);
     z-index: 5;
   }
-  .course.joint { background: var(--purple-tint); border-top: 3px solid var(--navy); }
-  .course.service { background: var(--copper-tint); border-top: 3px solid var(--copper-deep); }
+  .course.joint   {
+    background: linear-gradient(180deg, #ecebf5 0%, var(--purple-tint) 100%);
+    border-top: 4px solid var(--navy);
+    color: var(--navy-deep);
+  }
+  .course.service {
+    background: linear-gradient(180deg, #fbf0d9 0%, var(--copper-tint) 100%);
+    border-top: 4px solid var(--copper-deep);
+    color: #5a3d1a;
+  }
 
   .course.selected {
     outline: 3px solid var(--magenta);
@@ -511,82 +519,162 @@
   .arrow-line.ghost   { stroke: var(--copper-deep); opacity: 0.85; }
   .arrow-line.impl    { stroke: #ff7a00; stroke-width: 2.5; }
 
-  /* course detail panel */
+  /* course detail panel — sits between courses and the legend */
   .detail-panel {
-    background: linear-gradient(180deg, #fbfbfe 0%, #f5f6fa 100%);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #f0f1f8 100%);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 14px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
-    gap: 16px;
-    min-height: 64px;
+    gap: 22px;
+    min-height: 76px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .detail-panel:not(.empty) {
+    border-color: var(--navy);
+    box-shadow: 0 6px 18px rgba(26,31,78,0.08);
   }
   .detail-panel.empty .detail-content { display: none; }
   .detail-panel:not(.empty) .detail-empty { display: none; }
+
   .detail-empty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     color: var(--ink-soft);
-    font-size: 13px;
+    font-size: 13.5px;
     font-style: italic;
   }
+  .detail-empty .hint-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    font-style: normal;
+  }
+
   .detail-content {
     display: flex;
-    flex-wrap: wrap;
-    gap: 22px;
+    flex-wrap: nowrap;
+    gap: 24px;
     align-items: center;
     width: 100%;
   }
-  .detail-content .d-name {
-    font-weight: 800;
-    font-size: 16px;
-    color: var(--navy);
-    flex: 1 1 240px;
-  }
-  .detail-content .d-name.service { color: var(--copper-deep); }
-  .detail-content .d-row {
-    font-size: 12.5px;
-    color: var(--ink-soft);
-  }
-  .detail-content .d-row strong {
-    color: var(--ink);
-    font-weight: 700;
-    margin-left: 4px;
-  }
-  .detail-content .d-pill {
+  .d-pill {
     background: var(--navy);
     color: #fff;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 999px;
     font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.6px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
+    flex-shrink: 0;
   }
-  .detail-content .d-pill.service { background: var(--copper-deep); }
+  .d-pill.service { background: var(--copper-deep); }
+
+  .d-name-block { display: flex; flex-direction: column; min-width: 0; flex: 1 1 220px; }
+  .d-name {
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+  .d-name.service { color: var(--copper-deep); }
+  .d-anchor {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .d-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 0 14px;
+    border-left: 2px solid var(--line);
+    min-width: 110px;
+  }
+  .d-stat .d-label {
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .d-stat .d-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+  }
   .detail-close {
     cursor: pointer;
     background: transparent;
     border: 1px solid var(--line);
     color: var(--ink-soft);
     border-radius: 4px;
-    padding: 4px 8px;
+    padding: 5px 10px;
     font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
     margin-left: auto;
+    flex-shrink: 0;
   }
   .detail-close:hover { border-color: var(--magenta); color: var(--magenta); }
+
+  @media (max-width: 1100px) {
+    .detail-content { flex-wrap: wrap; }
+  }
 
   /* implication card hover affordance */
   .impl-card li {
     cursor: pointer;
-    transition: background 0.15s ease;
-    padding: 10px 6px;
-    border-radius: 4px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    padding: 10px 8px;
+    border-radius: 6px;
+    border: 1.5px solid transparent;
+    position: relative;
   }
   .impl-card li:hover {
     background: rgba(255,122,0,0.08);
   }
-  .impl-card.warnings li:hover .pip { background: #ff7a00; }
+  .impl-card li.impl-active {
+    background: rgba(255,122,0,0.12);
+    border-color: #ff7a00;
+    box-shadow: 0 2px 8px rgba(255,122,0,0.18);
+  }
+  .impl-card.warnings li:hover .pip,
+  .impl-card.warnings li.impl-active .pip { background: #ff7a00; }
+  .impl-card.benefits li:hover .pip,
+  .impl-card.benefits li.impl-active .pip { background: #ff7a00; }
+  .impl-card .pin-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: #ff7a00;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .impl-card li:hover .pin-hint { opacity: 0.85; }
+  .impl-card li.impl-active .pin-hint {
+    opacity: 1;
+    color: #ff7a00;
+  }
+  .impl-card li.impl-active .pin-hint::before { content: '📌 PINNED · '; }
+  .impl-card li:not(.impl-active):hover .pin-hint::before { content: ''; }
 
   /* ===== Implications grid ===== */
   .implications {
@@ -725,7 +813,7 @@
     <div>
       <div class="scenario-caption" id="scenarioCaption">Current State</div>
       <h1 id="pageTitle">Current Land Officer PME Pathway</h1>
-      <p class="subtitle">Interactive comparison: current pathway vs. shifting courses one rank earlier or later. Hover any course for details.</p>
+      <p class="subtitle">Interactive comparison of the current pathway against a proposed pathway with service courses pushed back one rank. Click a course for full details. Click an implication or benefit to pin its links to the timeline.</p>
     </div>
     <div class="tetp-brand">
       <div class="tetp-shield">
@@ -747,30 +835,17 @@
     <div class="tab" data-scenario="back">
       <div class="tab-label">View 02</div>
       <div class="tab-title">Proposed Pathway</div>
-      <div class="tab-desc">Service courses pushed back one rank — surfaces coverage gaps and concurrency.</div>
+      <div class="tab-desc">Service courses pushed back one rank. Surfaces coverage gaps and concurrency.</div>
     </div>
   </div>
 
   <!-- TIMELINE PANEL -->
   <div class="panel">
     <div class="panel-header">
-      <span id="timelineTitle">Course Timeline — Current State</span>
+      <span id="timelineTitle">Course Timeline</span>
       <span class="pill" id="timelinePill">Cadet → Major</span>
     </div>
     <div class="panel-body">
-
-      <!-- Course detail panel — populated when a course is clicked -->
-      <div class="detail-panel empty" id="detailPanel">
-        <div class="detail-empty">Click any course tile to see its duration, rank phase, and timing.</div>
-        <div class="detail-content">
-          <span class="d-pill" id="dPill">Joint</span>
-          <span class="d-name" id="dName">—</span>
-          <span class="d-row">Duration: <strong id="dDuration">—</strong></span>
-          <span class="d-row">Rank phase: <strong id="dAnchor">—</strong></span>
-          <span class="d-row">Career years: <strong id="dYears">—</strong></span>
-          <button class="detail-close" id="detailClose">Clear</button>
-        </div>
-      </div>
 
       <!-- JPME header bar -->
       <div class="jpme-bar">
@@ -821,6 +896,30 @@
         <div class="row-track" id="serviceTrack"></div>
       </div>
 
+      <!-- Course detail panel: populated when a course is clicked -->
+      <div class="detail-panel empty" id="detailPanel">
+        <div class="detail-empty">
+          <span class="hint-icon">i</span>
+          Click any course tile above to see its full name, duration, rank phase, and career window.
+        </div>
+        <div class="detail-content">
+          <span class="d-pill" id="dPill">Joint</span>
+          <div class="d-name-block">
+            <span class="d-name" id="dName">—</span>
+            <span class="d-anchor" id="dAnchor">—</span>
+          </div>
+          <div class="d-stat">
+            <span class="d-label">Duration</span>
+            <strong class="d-value" id="dDuration">—</strong>
+          </div>
+          <div class="d-stat">
+            <span class="d-label">Career window</span>
+            <strong class="d-value" id="dYears">—</strong>
+          </div>
+          <button class="detail-close" id="detailClose">Clear</button>
+        </div>
+      </div>
+
       <div class="legend">
         <span class="lg-item"><span class="swatch joint"></span> Joint Education</span>
         <span class="lg-item"><span class="swatch service"></span> Service Training</span>
@@ -834,7 +933,7 @@
   <!-- IMPLICATIONS -->
   <div class="implications" id="implications">
     <div class="impl-card warnings">
-      <div class="card-header">⚠ Risks &amp; Implications</div>
+      <div class="card-header">⚠ Implications</div>
       <div class="card-body">
         <ul id="warningsList"></ul>
       </div>
@@ -902,17 +1001,18 @@ const SCENARIOS = {
     title: 'Current Land Officer PME Pathway',
     pill:  'Cadet → Lt Col',
     joint: [
-      { id:'ipc-j', name:'Indirect Pathway Course',                   start:M(0.5),  end:M(3.5),  duration:'~3 years',  anchor:'Cadet' },
-      { id:'jbc',   name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
-      { id:'jac',   name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
-      { id:'jcsc',  name:'Joint Command and Staff College',           start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col / JPME L3' }
+      /* IPC (joint) aligned vertically with DPC in service row at M(0)–M(3) */
+      { id:'ipc-j', short:'Indirect Pathway', name:'Indirect Pathway Course',                   start:M(0),    end:M(3),    duration:'~3 years',  anchor:'Cadet' },
+      { id:'jbc',   short:'Joint Basic Course',     name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
+      { id:'jac',   short:'Joint Advanced Course',  name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
+      { id:'jcsc',  short:'Joint Cmd & Staff College', name:'Joint Command and Staff College',        start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col (JPME L3)' }
     ],
     service: [
-      { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
-      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.3),  duration:'~1 year',   anchor:'Lt entry' },
-      { id:'plt',  name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
-      { id:'coy',  name:'Company Commander Course',  start:M(14.5), end:M(14.92),duration:'~22 weeks', anchor:'Captain (late)' },
-      { id:'bn',   name:'Battalion Commander Course',start:M(19.4), end:M(19.84),duration:'~23 weeks', anchor:'Major (late)' }
+      { id:'dpc',  short:'Direct Pathway',     name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
+      { id:'ipc-s',short:'Indirect Pathway',   name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.3),  duration:'~1 year',   anchor:'Lt entry' },
+      { id:'plt',  short:'Platoon Cmd Course', name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
+      { id:'coy',  short:'Company Cmd Course', name:'Company Commander Course',  start:M(14.5), end:M(14.92),duration:'~22 weeks', anchor:'Captain (late)' },
+      { id:'bn',   short:'Battalion Cmd Course',name:'Battalion Commander Course',start:M(19.4), end:M(19.84),duration:'~23 weeks', anchor:'Major (late)' }
     ],
     gaps: [
       { row:'service', start:M(5.0),  end:M(14.5), label:'Time spent in unit' },
@@ -921,23 +1021,14 @@ const SCENARIOS = {
     warnings: [],
     benefits: [
       { title:'Proper distribution of courses across the continuum',
-        meta:'Joint and service courses balanced from Cadet to Lt Col — no rank carries the entire training burden, and progression is paced.',
+        meta:'Joint and service courses are balanced from Cadet to Lt Col, so no rank carries the entire training burden and progression is paced.',
         targets: [{type:'course',id:'plt'},{type:'course',id:'coy'},{type:'course',id:'bn'},{type:'course',id:'jbc'},{type:'course',id:'jac'},{type:'course',id:'jcsc'}] },
       { title:'Battalion Commander Course taken right before JCSC',
-        meta:'Graduating from JCSC qualifies officers to assume Battalion Commander appointments — sequencing aligns formal qualification with role assumption.',
+        meta:'Graduating from JCSC qualifies officers to assume Battalion Commander appointments, so the sequencing aligns formal qualification with role assumption.',
         targets: [{type:'course',id:'bn'},{type:'course',id:'jcsc'}] },
       { title:'Each command course aligned to its appropriate rank',
-        meta:'Plt Cmd at Lt, Coy Cmd at Capt, Bn Cmd at Major — officers complete each course at the rank where they will exercise that level of command.',
-        targets: [{type:'course',id:'plt'},{type:'course',id:'coy'},{type:'course',id:'bn'}] },
-      { title:'Three joint education touchpoints across the career',
-        meta:'JBC at 1st Lieutenant, JAC at Major, JCSC at Lt Col — progressive joint exposure from junior to senior leadership.',
-        targets: [{type:'course',id:'jbc'},{type:'course',id:'jac'},{type:'course',id:'jcsc'}] },
-      { title:'Substantial time in unit between courses',
-        meta:'Officers spend ~10 years at unit between Plt Cmd and Coy Cmd, building operational expertise before the next formal course.',
-        targets: [{type:'gap-region',row:'service',start:M(5.0),end:M(14.5)},{type:'gap-region',row:'service',start:M(14.92),end:M(19.4)}] },
-      { title:'Hybrid delivery minimises time away from units',
-        meta:'Course delivery model preserves operational presence and unit cohesion while completing required education.',
-        targets: [] }
+        meta:'Plt Cmd at Lt, Coy Cmd at Capt, Bn Cmd at Major. Officers complete each course at the rank where they will exercise that level of command.',
+        targets: [{type:'course',id:'plt'},{type:'course',id:'coy'},{type:'course',id:'bn'}] }
     ]
   },
 
@@ -948,36 +1039,39 @@ const SCENARIOS = {
     title: 'Proposed Land Officer PME Pathway',
     pill:  'Service courses pushed back one rank',
     joint: [
-      { id:'ipc-j', name:'Indirect Pathway Course',                   start:M(0.5),  end:M(3.5),  duration:'~3 years',  anchor:'Cadet' },
-      { id:'jbc',   name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
-      { id:'jac',   name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
-      { id:'jcsc',  name:'Joint Command and Staff College',           start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col / JPME L3' }
+      /* IPC (joint) aligned vertically with DPC in service row at M(0)–M(3) */
+      { id:'ipc-j', short:'Indirect Pathway',          name:'Indirect Pathway Course',                   start:M(0),    end:M(3),    duration:'~3 years',  anchor:'Cadet' },
+      { id:'jbc',   short:'Joint Basic Course',        name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
+      { id:'jac',   short:'Joint Advanced Course',     name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
+      { id:'jcsc',  short:'Joint Cmd & Staff College', name:'Joint Command and Staff College',           start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col (JPME L3)' }
     ],
     service: [
-      { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
-      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.3),  duration:'~1 year',   anchor:'Lt entry' },
-      { id:'plt',  name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
-      { id:'coy',  name:'Company Commander Course',  start:M(8.5),  end:M(8.92), duration:'~22 weeks', anchor:'1st Lieutenant' },
-      { id:'bn',   name:'Battalion Commander Course',start:M(17.0), end:M(17.44),duration:'~23 weeks', anchor:'Major (early)' }
+      { id:'dpc',  short:'Direct Pathway',      name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
+      { id:'ipc-s',short:'Indirect Pathway',    name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.3),  duration:'~1 year',   anchor:'Lt entry' },
+      { id:'plt',  short:'Platoon Cmd Course',  name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
+      /* COY aligned vertically with JBC at M(7.5) — same x → stacked */
+      { id:'coy',  short:'Company Cmd Course',  name:'Company Commander Course',  start:M(7.5),  end:M(7.92), duration:'~22 weeks', anchor:'1st Lieutenant' },
+      /* BN  aligned vertically with JAC at M(16.5) — same x → stacked */
+      { id:'bn',   short:'Battalion Cmd Course',name:'Battalion Commander Course',start:M(16.5), end:M(16.94),duration:'~23 weeks', anchor:'Major (early)' }
     ],
     gaps: [
-      { row:'service', start:M(5.0),  end:M(8.5),  label:'~3 years' },
-      { row:'service', start:M(8.92), end:M(17.0), label:'~6 years' },
-      { row:'service', start:M(17.44),end:M(21.5), label:'~5 years' }
+      { row:'service', start:M(5.0),  end:M(7.5),  label:'~3 years' },
+      { row:'service', start:M(7.92), end:M(16.5), label:'~6 years' },
+      { row:'service', start:M(16.94),end:M(21.5), label:'~5 years' }
     ],
     /* No time overlaps to flag — implications are about same-rank concurrency
        and misalignment, not direct time collisions. */
     collisions: [],
     warnings: [
       { title:'Coverage Gaps Emerge',
-        meta:'No service or joint courses delivered between 1st Lieutenant – Captain &amp; Major – Lt Colonel — long stretches without formal development.',
+        meta:'No service or joint courses are delivered between 1st Lieutenant and Captain, or between Major and Lt Colonel. These are long stretches without formal development.',
         targets: [
-          {type:'gap-region',row:'service',start:M(8.92),end:M(17.0)},
-          {type:'gap-region',row:'service',start:M(17.44),end:M(21.5)}
+          {type:'gap-region',row:'service',start:M(7.92),end:M(16.5)},
+          {type:'gap-region',row:'service',start:M(16.94),end:M(21.5)}
         ]
       },
       { title:'Concurrent Course Load',
-        meta:'The key joint and service courses are delivered at the same rank — JBC alongside Coy Cmd at 1st Lt, JAC alongside Bn Cmd at Major.',
+        meta:'The key joint and service courses are delivered at the same rank. JBC sits alongside Coy Cmd at 1st Lieutenant, and JAC sits alongside Bn Cmd at Major.',
         targets: [
           {type:'course',id:'jbc'},
           {type:'course',id:'coy'},
@@ -986,7 +1080,7 @@ const SCENARIOS = {
         ]
       },
       { title:'Battalion Course Misaligned',
-        meta:'Battalion command requires JCSC (Lt Col), so the Battalion course sits too early — qualification-then-appointment chain is broken.',
+        meta:'Battalion command requires JCSC (Lt Col), so the Battalion course sits too early. The qualification then appointment chain is broken.',
         targets: [
           {type:'course',id:'bn'},
           {type:'gap-between',from:'bn',to:'jcsc',row:'service'},
@@ -1016,7 +1110,7 @@ function getGhostsFor(scenarioKey, kind) {
 /* ============================================================
    RENDERING
    ============================================================ */
-const MIN_TILE_PCT = 4.0;   // smallest visual width for short courses
+const MIN_TILE_PCT = 6.5;   // smallest visual width — fits whole-word labels
 function pct(monthValue) {
   return ((monthValue - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
 }
@@ -1065,7 +1159,7 @@ function renderTrack(trackEl, courses, gaps, collisionPairs, kind, ghosts) {
     el.dataset.ghostFor = g.ghostFor;
     el.style.left = left + '%';
     el.style.width = width + '%';
-    el.innerHTML = `<span class="course-name">${g.name}</span>`;
+    el.innerHTML = `<span class="course-name">${g.short || g.name}</span>`;
     trackEl.appendChild(el);
   });
 
@@ -1106,7 +1200,7 @@ function renderTrack(trackEl, courses, gaps, collisionPairs, kind, ghosts) {
     el.dataset.endYear  = (c.end   / 12).toFixed(1);
     el.dataset.kind     = kind;
     el.dataset.collision= isCollision ? '1' : '0';
-    el.innerHTML = `<span class="course-name">${c.name}</span>`;
+    el.innerHTML = `<span class="course-name">${c.short || c.name}</span>`;
   });
 
   // remove tiles that are no longer in scenario
@@ -1118,11 +1212,15 @@ function renderTrack(trackEl, courses, gaps, collisionPairs, kind, ghosts) {
   });
 }
 
+let PINNED_IMPL = null;
+
 function renderImplications(scenario) {
   const wEl = document.getElementById('warningsList');
   const bEl = document.getElementById('benefitsList');
   wEl.innerHTML = '';
   bEl.innerHTML = '';
+  PINNED_IMPL = null;
+  clearImplicationHighlights();
 
   const buildItem = (item, sym, idx, listKind) => {
     const li = document.createElement('li');
@@ -1130,10 +1228,27 @@ function renderImplications(scenario) {
     li.dataset.idx  = idx;
     li.innerHTML = `
       <span class="pip">${sym}</span>
-      <span class="impl-text"><strong>${item.title}</strong><span class="meta">${item.meta}</span></span>`;
-    li.addEventListener('mouseenter', () => highlightImplication(li, item.targets || []));
-    li.addEventListener('mouseleave', () => clearImplicationHighlights());
-    li.addEventListener('click',      () => highlightImplication(li, item.targets || [], true));
+      <span class="impl-text"><strong>${item.title}</strong><span class="meta">${item.meta}</span><span class="pin-hint">click to pin</span></span>`;
+    const targets = item.targets || [];
+    li.addEventListener('mouseenter', () => {
+      if (PINNED_IMPL) return;
+      highlightImplication(li, targets, false);
+    });
+    li.addEventListener('mouseleave', () => {
+      if (PINNED_IMPL) return;
+      clearImplicationHighlights();
+    });
+    li.addEventListener('click', e => {
+      e.stopPropagation();
+      if (PINNED_IMPL === li) {
+        PINNED_IMPL = null;
+        clearImplicationHighlights();
+      } else {
+        PINNED_IMPL = li;
+        clearImplicationHighlights();
+        highlightImplication(li, targets, true);
+      }
+    });
     return li;
   };
 
@@ -1178,10 +1293,11 @@ function applyScenario(key) {
 
   // selection / arrows reset
   clearSelection();
+  PINNED_IMPL = null;
   clearImplicationHighlights();
 
-  // ghost arrows (only on view 2)
-  setTimeout(drawGhostArrows, 80);  // wait for reflow + transitions to settle
+  // ghost arrows (only on view 2) — wait for reflow + transitions to settle
+  setTimeout(drawGhostArrows, 80);
 }
 
 /* ============================================================
