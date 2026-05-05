@@ -154,7 +154,7 @@
   /* ===== Scenario tabs ===== */
   .scenario-tabs {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     margin-bottom: 22px;
   }
@@ -354,10 +354,11 @@
     overflow: hidden;
   }
 
-  /* dotted shaded gap regions (rendered absolute) */
+  /* dotted shaded gap regions (rendered absolute, BEHIND course tiles) */
   .gap-region {
     position: absolute;
     top: 0; bottom: 0;
+    z-index: 1;
     background-image: repeating-linear-gradient(
       135deg,
       rgba(26,31,78,0.06) 0,
@@ -382,7 +383,7 @@
     white-space: nowrap;
   }
 
-  /* course tile */
+  /* course tile — always rendered ABOVE gap regions (z-index 4+) */
   .course {
     position: absolute;
     top: 12px;
@@ -395,6 +396,7 @@
     line-height: 1.18;
     overflow: hidden;
     cursor: pointer;
+    z-index: 4;
     transition: left 0.6s cubic-bezier(.4,0,.2,1),
                 width 0.6s cubic-bezier(.4,0,.2,1),
                 opacity 0.35s ease,
@@ -406,6 +408,30 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+  }
+  .course.dragging {
+    cursor: grabbing !important;
+    transition: none !important;
+    z-index: 9 !important;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.28);
+  }
+  .course.draggable {
+    cursor: grab;
+  }
+  .course.draggable::after {
+    content: '';
+    position: absolute;
+    right: 4px; top: 4px;
+    width: 10px; height: 10px;
+    background-image:
+      linear-gradient(90deg, currentColor 0, currentColor 100%),
+      linear-gradient(90deg, currentColor 0, currentColor 100%),
+      linear-gradient(90deg, currentColor 0, currentColor 100%);
+    background-size: 2px 2px, 2px 2px, 2px 2px;
+    background-repeat: no-repeat;
+    background-position: 0 2px, 0 5px, 0 8px;
+    opacity: 0.45;
+    pointer-events: none;
   }
   .course .course-name {
     display: block;
@@ -430,11 +456,20 @@
     border-top: 4px solid var(--copper-deep);
     color: #5a3d1a;
   }
+  /* sub-row: tile floats in the upper half of the row.
+     Used for the Service Indirect Pathway Course so it sits visually
+     above the Direct Pathway Course rather than overlapping it. */
+  .course.subrow-top {
+    top: 6px;
+    bottom: auto;
+    height: 48%;
+    z-index: 5;   /* above siblings in the same row */
+  }
 
   .course.selected {
     outline: 3px solid var(--magenta);
     outline-offset: -3px;
-    z-index: 6;
+    z-index: 7;
     box-shadow: 0 8px 18px rgba(0,0,0,0.22);
   }
 
@@ -634,6 +669,23 @@
 
   @media (max-width: 1100px) {
     .detail-content { flex-wrap: wrap; }
+  }
+
+  /* custom-mode banner */
+  body.custom-mode .panel-header {
+    background: linear-gradient(90deg, var(--navy) 0%, #2a3a85 100%);
+  }
+  body.custom-mode .panel-header::after {
+    content: '✋ Drag any course tile to reposition it';
+    background: #ff7a00;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-left: 12px;
   }
 
   /* implication card hover affordance */
@@ -837,6 +889,11 @@
       <div class="tab-title">Proposed Pathway</div>
       <div class="tab-desc">Service courses pushed back one rank. Surfaces coverage gaps and concurrency.</div>
     </div>
+    <div class="tab" data-scenario="custom">
+      <div class="tab-label">View 03</div>
+      <div class="tab-title">Custom Pathway</div>
+      <div class="tab-desc">Drag any course to test new sequencing. Inter-course gaps recalculate automatically.</div>
+    </div>
   </div>
 
   <!-- TIMELINE PANEL -->
@@ -924,8 +981,8 @@
         <span class="lg-item"><span class="swatch joint"></span> Joint Education</span>
         <span class="lg-item"><span class="swatch service"></span> Service Training</span>
         <span class="lg-item"><span class="swatch ghost-sw"></span> Previous (View 01) position</span>
-        <span class="lg-item"><span class="swatch gap"></span> Inter-course gap</span>
-        <span class="lg-item" style="margin-left:auto; color:var(--navy); font-weight:600;">Click a course to see details · hover an implication to highlight it on the timeline</span>
+        <span class="lg-item"><span class="swatch gap"></span> Years between courses (auto-calculated)</span>
+        <span class="lg-item" style="margin-left:auto; color:var(--navy); font-weight:600;">Click a course for details · click an implication or benefit to pin its highlight</span>
       </div>
     </div>
   </div>
@@ -1001,33 +1058,33 @@ const SCENARIOS = {
     title: 'Current Land Officer PME Pathway',
     pill:  'Cadet → Lt Col',
     joint: [
-      /* IPC (joint) aligned vertically with DPC in service row at M(0)–M(3) */
       { id:'ipc-j', short:'Indirect Pathway', name:'Indirect Pathway Course',                   start:M(0),    end:M(3),    duration:'~3 years',  anchor:'Cadet' },
-      { id:'jbc',   short:'Joint Basic Course',     name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
-      { id:'jac',   short:'Joint Advanced Course',  name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
-      { id:'jcsc',  short:'Joint Cmd & Staff College', name:'Joint Command and Staff College',        start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col (JPME L3)' }
+      { id:'jbc',   short:'Joint Basic Course',     name:'Joint Basic Course for Junior Officers',    start:M(8.0),  end:M(8.25), duration:'~3 weeks',  anchor:'1st Lieutenant' },
+      /* JAC sits at end of Captain, before Major rank */
+      { id:'jac',   short:'Joint Advanced Course',  name:'Joint Advanced Course for Junior Officers', start:M(14.67),end:M(14.92),duration:'~3 weeks',  anchor:'Captain (late)' },
+      { id:'jcsc',  short:'Joint Cmd & Staff College', name:'Joint Command and Staff College',        start:M(21.36),end:M(22.13),duration:'~40 weeks', anchor:'Lt Col (JPME L3)' }
     ],
     service: [
-      { id:'dpc',  short:'Direct Pathway',     name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
-      { id:'ipc-s',short:'Indirect Pathway',   name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.3),  duration:'~1 year',   anchor:'Lt entry' },
+      /* Direct Pathway starts 1 year after Indirect, both end at Lt entry M(4) */
+      { id:'dpc',  short:'Direct Pathway',     name:'Direct Pathway Course',     start:M(1),    end:M(4),    duration:'3 years',   anchor:'Cadet' },
+      /* Indirect Pathway service portion: 1 year following the joint indirect course */
+      { id:'ipc-s',short:'Indirect Pathway',   name:'Indirect Pathway Course',   start:M(3),    end:M(4),    duration:'~1 year',   anchor:'Cadet (late)', subrow:'top' },
       { id:'plt',  short:'Platoon Cmd Course', name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
-      { id:'coy',  short:'Company Cmd Course', name:'Company Commander Course',  start:M(14.5), end:M(14.92),duration:'~22 weeks', anchor:'Captain (late)' },
-      { id:'bn',   short:'Battalion Cmd Course',name:'Battalion Commander Course',start:M(19.4), end:M(19.84),duration:'~23 weeks', anchor:'Major (late)' }
+      { id:'coy',  short:'Company Cmd Course', name:'Company Commander Course',  start:M(12.25),end:M(12.67),duration:'~22 weeks', anchor:'Captain' },
+      { id:'bn',   short:'Battalion Cmd Course',name:'Battalion Commander Course',start:M(17.92),end:M(18.36),duration:'~23 weeks', anchor:'Major' }
     ],
-    gaps: [
-      { row:'service', start:M(5.0),  end:M(14.5), label:'Time spent in unit' },
-      { row:'service', start:M(14.92),end:M(19.4), label:'Time spent in unit' }
-    ],
+    /* Gaps are auto-computed from course positions (computeAllGaps). */
+    gaps: [],
     warnings: [],
     benefits: [
       { title:'Proper distribution of courses across the continuum',
-        meta:'Joint and service courses are balanced from Cadet to Lt Col, so no rank carries the entire training burden and progression is paced.',
+        meta:'Joint and service courses are balanced from Cadet to Lieutenant Colonel, so no rank carries the entire training burden and progression is paced.',
         targets: [{type:'course',id:'plt'},{type:'course',id:'coy'},{type:'course',id:'bn'},{type:'course',id:'jbc'},{type:'course',id:'jac'},{type:'course',id:'jcsc'}] },
-      { title:'Battalion Commander Course taken right before JCSC',
-        meta:'Graduating from JCSC qualifies officers to assume Battalion Commander appointments, so the sequencing aligns formal qualification with role assumption.',
+      { title:'Battalion Commander Course taken right before Joint Command and Staff College',
+        meta:'Graduating from the Joint Command and Staff College qualifies officers to assume Battalion Commander appointments, so the sequencing aligns formal qualification with role assumption.',
         targets: [{type:'course',id:'bn'},{type:'course',id:'jcsc'}] },
       { title:'Each command course aligned to its appropriate rank',
-        meta:'Plt Cmd at Lt, Coy Cmd at Capt, Bn Cmd at Major. Officers complete each course at the rank where they will exercise that level of command.',
+        meta:'Platoon Commander Course at Lieutenant, Company Commander Course at Captain, Battalion Commander Course at Major. Officers complete each course at the rank where they will exercise that level of command.',
         targets: [{type:'course',id:'plt'},{type:'course',id:'coy'},{type:'course',id:'bn'}] }
     ]
   },
@@ -1039,39 +1096,36 @@ const SCENARIOS = {
     title: 'Proposed Land Officer PME Pathway',
     pill:  'Service courses pushed back one rank',
     joint: [
-      /* IPC (joint) aligned vertically with DPC in service row at M(0)–M(3) */
       { id:'ipc-j', short:'Indirect Pathway',          name:'Indirect Pathway Course',                   start:M(0),    end:M(3),    duration:'~3 years',  anchor:'Cadet' },
-      { id:'jbc',   short:'Joint Basic Course',        name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
-      { id:'jac',   short:'Joint Advanced Course',     name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
-      { id:'jcsc',  short:'Joint Cmd & Staff College', name:'Joint Command and Staff College',           start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col (JPME L3)' }
+      { id:'jbc',   short:'Joint Basic Course',        name:'Joint Basic Course for Junior Officers',    start:M(8.0),  end:M(8.25), duration:'~3 weeks',  anchor:'1st Lieutenant' },
+      /* JAC sits at end of Captain, before Major rank */
+      { id:'jac',   short:'Joint Advanced Course',     name:'Joint Advanced Course for Junior Officers', start:M(14.67),end:M(14.92),duration:'~3 weeks',  anchor:'Captain (late)' },
+      { id:'jcsc',  short:'Joint Cmd & Staff College', name:'Joint Command and Staff College',           start:M(21.36),end:M(22.13),duration:'~40 weeks', anchor:'Lt Col (JPME L3)' }
     ],
     service: [
-      { id:'dpc',  short:'Direct Pathway',      name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
-      { id:'ipc-s',short:'Indirect Pathway',    name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.3),  duration:'~1 year',   anchor:'Lt entry' },
+      { id:'dpc',  short:'Direct Pathway',      name:'Direct Pathway Course',     start:M(1),    end:M(4),    duration:'3 years',   anchor:'Cadet' },
+      { id:'ipc-s',short:'Indirect Pathway',    name:'Indirect Pathway Course',   start:M(3),    end:M(4),    duration:'~1 year',   anchor:'Cadet (late)', subrow:'top' },
       { id:'plt',  short:'Platoon Cmd Course',  name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
-      /* COY aligned vertically with JBC at M(7.5) — same x → stacked */
-      { id:'coy',  short:'Company Cmd Course',  name:'Company Commander Course',  start:M(7.5),  end:M(7.92), duration:'~22 weeks', anchor:'1st Lieutenant' },
-      /* BN  aligned vertically with JAC at M(16.5) — same x → stacked */
-      { id:'bn',   short:'Battalion Cmd Course',name:'Battalion Commander Course',start:M(16.5), end:M(16.94),duration:'~23 weeks', anchor:'Major (early)' }
+      /* Company Commander Course aligned vertically with Joint Basic Course at M(8.0) — stacked */
+      { id:'coy',  short:'Company Cmd Course',  name:'Company Commander Course',  start:M(8.0),  end:M(8.42), duration:'~22 weeks', anchor:'1st Lieutenant' },
+      /* Battalion Commander Course aligned vertically with Joint Advanced Course at M(14.67) — stacked */
+      { id:'bn',   short:'Battalion Cmd Course',name:'Battalion Commander Course',start:M(14.67),end:M(15.11),duration:'~23 weeks', anchor:'Captain (late)' }
     ],
-    gaps: [
-      { row:'service', start:M(5.0),  end:M(7.5),  label:'~3 years' },
-      { row:'service', start:M(7.92), end:M(16.5), label:'~6 years' },
-      { row:'service', start:M(16.94),end:M(21.5), label:'~5 years' }
-    ],
+    /* Gaps are auto-computed from course positions (computeAllGaps). */
+    gaps: [],
     /* No time overlaps to flag — implications are about same-rank concurrency
        and misalignment, not direct time collisions. */
     collisions: [],
     warnings: [
       { title:'Coverage Gaps Emerge',
-        meta:'No service or joint courses are delivered between 1st Lieutenant and Captain, or between Major and Lt Colonel. These are long stretches without formal development.',
+        meta:'No service or joint courses are delivered between 1st Lieutenant and Captain, or between Captain and Lieutenant Colonel. These are long stretches without formal development.',
         targets: [
-          {type:'gap-region',row:'service',start:M(7.92),end:M(16.5)},
-          {type:'gap-region',row:'service',start:M(16.94),end:M(21.5)}
+          {type:'gap-between',from:'coy',to:'jac'},
+          {type:'gap-between',from:'bn',to:'jcsc'}
         ]
       },
       { title:'Concurrent Course Load',
-        meta:'The key joint and service courses are delivered at the same rank. JBC sits alongside Coy Cmd at 1st Lieutenant, and JAC sits alongside Bn Cmd at Major.',
+        meta:'The key joint and service courses are delivered at the same rank. The Joint Basic Course for Junior Officers sits alongside the Company Commander Course at 1st Lieutenant, and the Joint Advanced Course for Junior Officers sits alongside the Battalion Commander Course at Captain.',
         targets: [
           {type:'course',id:'jbc'},
           {type:'course',id:'coy'},
@@ -1080,7 +1134,7 @@ const SCENARIOS = {
         ]
       },
       { title:'Battalion Course Misaligned',
-        meta:'Battalion command requires JCSC (Lt Col), so the Battalion course sits too early. The qualification then appointment chain is broken.',
+        meta:'Battalion command requires the Joint Command and Staff College at Lieutenant Colonel, so the Battalion Commander Course sits too early. The qualification then appointment chain is broken.',
         targets: [
           {type:'course',id:'bn'},
           {type:'gap-between',from:'bn',to:'jcsc',row:'service'},
@@ -1092,6 +1146,53 @@ const SCENARIOS = {
   }
 
 };
+
+/* Custom scenario: deep-cloned from current so users can drag courses
+   and explore alternative timings without affecting the canonical views. */
+SCENARIOS.custom = JSON.parse(JSON.stringify(SCENARIOS.current));
+SCENARIOS.custom.title = 'Custom Land Officer PME Pathway';
+SCENARIOS.custom.pill  = 'Drag courses to test new sequencing';
+SCENARIOS.custom.draggable = true;
+SCENARIOS.custom.warnings = [];
+SCENARIOS.custom.benefits = [
+  { title:'How to use this view',
+    meta:'Click and drag any course tile horizontally to reposition it on the timeline. Each gap label between consecutive courses recalculates automatically as you move them.', targets: [] },
+  { title:'Years are measured between any two consecutive courses',
+    meta:'The timeline treats joint and service courses as a single sequence. The label between two tiles always shows the time spent in unit between the end of one course and the start of the next.', targets: [] }
+];
+
+/* ============================================================
+   AUTO-COMPUTE GAPS BETWEEN ALL COURSES (joint + service merged)
+   Returns gaps spanning both rows so labels show the time between
+   any two consecutive courses regardless of their row.
+   ============================================================ */
+function computeAllGaps(scenario) {
+  const all = [...scenario.joint, ...scenario.service]
+    .filter(c => c.start < TIMELINE_END)
+    .sort((a,b) => a.start - b.start);
+  const gaps = [];
+  for (let i = 0; i < all.length - 1; i++) {
+    const a = all[i];
+    const b = all[i+1];
+    const months = b.start - a.end;
+    if (months >= 6) {
+      const yrs = months / 12;
+      const rounded = Math.round(yrs);
+      const label = yrs < 1 ? '<1 year'
+                  : rounded === 1 ? '~1 year'
+                  : `~${rounded} years`;
+      gaps.push({
+        row: 'all',
+        start: a.end,
+        end: b.start,
+        label,
+        fromCourse: a.id,
+        toCourse: b.id
+      });
+    }
+  }
+  return gaps;
+}
 
 /* Build ghost (previous-position) tiles dynamically by comparing the
    active scenario against scenario `current`. */
@@ -1129,19 +1230,22 @@ function tileLeftWidth(course) {
    - new tiles are appended (and faded in)
    - tiles no longer in the scenario fade out then are removed
    - ghost tiles (previous-view positions) and gap regions are re-built */
-function renderTrack(trackEl, courses, gaps, collisionPairs, kind, ghosts) {
-  // re-render gap regions
+function renderTrack(trackEl, courses, gaps, collisionPairs, kind, ghosts, showGapLabels, draggable) {
+  // re-render gap regions. row:'all' gaps appear in both rows; otherwise only matching row.
   trackEl.querySelectorAll('.gap-region').forEach(el => el.remove());
-  (gaps || []).filter(g => g.row === kind).forEach(g => {
+  (gaps || []).filter(g => g.row === kind || g.row === 'all').forEach(g => {
     const left = pct(g.start);
     const width = pct(g.end) - pct(g.start);
+    if (width <= 0) return;
     const div = document.createElement('div');
     div.className = 'gap-region';
     div.dataset.gapStart = g.start;
     div.dataset.gapEnd   = g.end;
+    if (g.fromCourse) div.dataset.gapFrom = g.fromCourse;
+    if (g.toCourse)   div.dataset.gapTo   = g.toCourse;
     div.style.left = left + '%';
     div.style.width = width + '%';
-    if (g.label) {
+    if (g.label && showGapLabels) {
       const lbl = document.createElement('span');
       lbl.className = 'gap-label';
       lbl.textContent = g.label;
@@ -1192,7 +1296,11 @@ function renderTrack(trackEl, courses, gaps, collisionPairs, kind, ghosts) {
       el.style.left = left + '%';
       el.style.width = width + '%';
     }
-    el.className = 'course ' + kind + (isCollision ? ' collision' : '');
+    let cls = 'course ' + kind;
+    if (isCollision)     cls += ' collision';
+    if (c.subrow==='top')cls += ' subrow-top';
+    if (draggable)       cls += ' draggable';
+    el.className = cls;
     el.dataset.name     = c.name;
     el.dataset.duration = c.duration;
     el.dataset.anchor   = c.anchor || '';
@@ -1201,6 +1309,7 @@ function renderTrack(trackEl, courses, gaps, collisionPairs, kind, ghosts) {
     el.dataset.kind     = kind;
     el.dataset.collision= isCollision ? '1' : '0';
     el.innerHTML = `<span class="course-name">${c.short || c.name}</span>`;
+    if (draggable) attachDragHandler(el, c, kind);
   });
 
   // remove tiles that are no longer in scenario
@@ -1258,14 +1367,29 @@ function renderImplications(scenario) {
 
 const SCENARIO_CAPTION = {
   current: 'Current State',
-  back:    'Proposed Pathway'
+  back:    'Proposed Pathway',
+  custom:  'Custom Pathway'
 };
 
 let CURRENT_SCENARIO = 'current';
 
+function rerenderTimelineForCurrentScenario() {
+  const sc = SCENARIOS[CURRENT_SCENARIO];
+  sc.gaps = computeAllGaps(sc);
+  const jointGhosts   = getGhostsFor(CURRENT_SCENARIO, 'joint');
+  const serviceGhosts = getGhostsFor(CURRENT_SCENARIO, 'service');
+  renderTrack(document.getElementById('jointTrack'),
+              sc.joint, sc.gaps, sc.collisions, 'joint',
+              jointGhosts, /* showGapLabels */ false, !!sc.draggable);
+  renderTrack(document.getElementById('serviceTrack'),
+              sc.service, sc.gaps, sc.collisions, 'service',
+              serviceGhosts, /* showGapLabels */ true, !!sc.draggable);
+}
+
 function applyScenario(key) {
   CURRENT_SCENARIO = key;
   const sc = SCENARIOS[key];
+  sc.gaps = computeAllGaps(sc);
   document.getElementById('timelineTitle').textContent = 'Course Timeline';
   document.getElementById('timelinePill').textContent = sc.pill;
   document.getElementById('pageTitle').textContent = sc.title;
@@ -1273,11 +1397,7 @@ function applyScenario(key) {
   caption.textContent = SCENARIO_CAPTION[key] || '';
   caption.dataset.scenario = key;
 
-  const jointGhosts   = getGhostsFor(key, 'joint');
-  const serviceGhosts = getGhostsFor(key, 'service');
-
-  renderTrack(document.getElementById('jointTrack'),   sc.joint,   sc.gaps, sc.collisions, 'joint',   jointGhosts);
-  renderTrack(document.getElementById('serviceTrack'), sc.service, sc.gaps, sc.collisions, 'service', serviceGhosts);
+  rerenderTimelineForCurrentScenario();
   renderImplications(sc);
 
   // panel visibility
@@ -1286,6 +1406,9 @@ function applyScenario(key) {
   const warningsOnly = !sc.benefits || sc.benefits.length === 0;
   implEl.classList.toggle('benefits-only', benefitsOnly && !warningsOnly);
   implEl.classList.toggle('warnings-only', warningsOnly && !benefitsOnly);
+
+  // custom-mode helper banner toggle
+  document.body.classList.toggle('custom-mode', key === 'custom');
 
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.scenario === key);
@@ -1325,6 +1448,93 @@ function selectCourse(courseEl) {
 function clearSelection() {
   document.querySelectorAll('.course.selected').forEach(el => el.classList.remove('selected'));
   document.getElementById('detailPanel').classList.add('empty');
+}
+
+/* ============================================================
+   DRAG HANDLERS (custom view only)
+   ------------------------------------------------------------
+   Mouse-down on a course tile starts a drag. Mouse-move updates
+   the tile's left% and updates the underlying course start/end.
+   Gaps are recomputed and re-rendered live so labels track the
+   tile in real time.
+   ============================================================ */
+let DRAG = null;
+
+function attachDragHandler(el, course, kind) {
+  el.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    if (e.target.closest('.detail-close')) return;
+    e.preventDefault();
+    const trackEl = el.parentElement;
+    const trackRect = trackEl.getBoundingClientRect();
+    DRAG = {
+      el, course, kind, trackEl, trackRect,
+      startX: e.clientX,
+      startLeft: parseFloat(el.style.left || '0'),
+      widthPct: parseFloat(el.style.width || '0'),
+      origStart: course.start,
+      origEnd: course.end
+    };
+    el.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+  });
+}
+
+document.addEventListener('mousemove', e => {
+  if (!DRAG) return;
+  const dxPx = e.clientX - DRAG.startX;
+  const dxPct = (dxPx / DRAG.trackRect.width) * 100;
+  let newLeft = DRAG.startLeft + dxPct;
+  newLeft = Math.max(0, Math.min(100 - DRAG.widthPct, newLeft));
+  DRAG.el.style.left = newLeft + '%';
+  // translate left% back to months and update course start/end
+  const newStart = (newLeft / 100) * (TIMELINE_END - TIMELINE_START) + TIMELINE_START;
+  const dur = DRAG.origEnd - DRAG.origStart;
+  DRAG.course.start = newStart;
+  DRAG.course.end   = newStart + dur;
+  DRAG.el.dataset.startYear = (newStart / 12).toFixed(1);
+  DRAG.el.dataset.endYear   = ((newStart + dur) / 12).toFixed(1);
+  // recompute and re-render gap labels (don't re-render tiles)
+  const sc = SCENARIOS[CURRENT_SCENARIO];
+  sc.gaps = computeAllGaps(sc);
+  renderGapsOnly(sc);
+});
+
+document.addEventListener('mouseup', () => {
+  if (!DRAG) return;
+  DRAG.el.classList.remove('dragging');
+  document.body.style.userSelect = '';
+  DRAG = null;
+});
+
+function renderGapsOnly(sc) {
+  const jointTrack   = document.getElementById('jointTrack');
+  const serviceTrack = document.getElementById('serviceTrack');
+  // joint row: gaps without labels
+  jointTrack.querySelectorAll('.gap-region').forEach(el => el.remove());
+  serviceTrack.querySelectorAll('.gap-region').forEach(el => el.remove());
+  (sc.gaps || []).forEach(g => {
+    const left = pct(g.start);
+    const width = pct(g.end) - pct(g.start);
+    if (width <= 0) return;
+    [[jointTrack,false],[serviceTrack,true]].forEach(([track,withLabel]) => {
+      const div = document.createElement('div');
+      div.className = 'gap-region';
+      div.dataset.gapStart = g.start;
+      div.dataset.gapEnd   = g.end;
+      if (g.fromCourse) div.dataset.gapFrom = g.fromCourse;
+      if (g.toCourse)   div.dataset.gapTo   = g.toCourse;
+      div.style.left = left + '%';
+      div.style.width = width + '%';
+      if (g.label && withLabel) {
+        const lbl = document.createElement('span');
+        lbl.className = 'gap-label';
+        lbl.textContent = g.label;
+        div.appendChild(lbl);
+      }
+      track.appendChild(div);
+    });
+  });
 }
 
 /* ============================================================
@@ -1465,12 +1675,10 @@ document.addEventListener('mouseout', e => {
    INTERACTIONS
    ============================================================ */
 document.addEventListener('click', e => {
+  // ignore the trailing click after a drag
+  if (e.target.classList && e.target.classList.contains('dragging')) return;
   const courseEl = e.target.closest('.course:not(.ghost)');
   if (courseEl) { selectCourse(courseEl); return; }
-  // clicks outside a course tile / impl card clear selection
-  if (!e.target.closest('.detail-panel') && !e.target.closest('.impl-card li') && !e.target.closest('.tab')) {
-    // do nothing — keep selection on background clicks
-  }
 });
 
 document.getElementById('detailClose').addEventListener('click', clearSelection);
