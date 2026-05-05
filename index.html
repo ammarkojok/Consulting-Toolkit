@@ -46,6 +46,15 @@
     max-width: 1480px;
     margin: 0 auto;
     padding: 28px 32px 64px;
+    position: relative;
+  }
+  .page-svg-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    overflow: visible;
   }
 
   /* ===== Header ===== */
@@ -379,17 +388,24 @@
     top: 14px;
     bottom: 14px;
     border-radius: 6px;
-    padding: 8px 8px 24px;
+    padding: 6px 8px;
     color: var(--ink);
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 600;
     line-height: 1.18;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    transition: left 0.55s cubic-bezier(.4,0,.2,1),
+                width 0.55s cubic-bezier(.4,0,.2,1),
+                opacity 0.35s ease,
+                transform 0.18s ease,
+                box-shadow 0.18s ease,
+                outline-color 0.18s ease;
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
   .course .course-name {
     display: block;
@@ -397,35 +413,180 @@
     text-overflow: ellipsis;
     word-wrap: break-word;
     hyphens: auto;
+    width: 100%;
   }
   .course:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.22);
     z-index: 5;
   }
-  .course .course-tag {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    padding: 4px 8px;
-    color: var(--white);
-    font-size: 11px;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 0.4px;
+  .course.joint { background: var(--purple-tint); border-top: 3px solid var(--navy); }
+  .course.service { background: var(--copper-tint); border-top: 3px solid var(--copper-deep); }
+
+  .course.selected {
+    outline: 3px solid var(--magenta);
+    outline-offset: -3px;
+    z-index: 6;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.22);
   }
-  .course.joint { background: var(--purple-tint); }
-  .course.joint .course-tag { background: var(--navy); }
-  .course.service { background: var(--copper-tint); }
-  .course.service .course-tag { background: var(--copper-deep); }
+
+  /* ghost tiles representing the previous-view position */
+  .course.ghost {
+    background: transparent !important;
+    border: 2px dashed rgba(26,31,78,0.45);
+    color: rgba(26,31,78,0.55);
+    box-shadow: none;
+    cursor: default;
+    pointer-events: none;
+    font-style: italic;
+    font-size: 10.5px;
+  }
+  .course.ghost.service { border-color: rgba(160,106,46,0.55); color: rgba(80,50,20,0.55); }
+  .course.ghost::before {
+    content: 'WAS HERE';
+    position: absolute;
+    top: 4px; left: 0; right: 0;
+    text-align: center;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: rgba(26,31,78,0.5);
+  }
+  .course.ghost.service::before { color: rgba(160,106,46,0.55); }
+
   .course.collision {
     outline: 2.5px solid var(--magenta);
     outline-offset: -2px;
     animation: pulse 1.6s ease-in-out infinite;
   }
+  .course.implication-target {
+    outline: 3px solid #ff7a00;
+    outline-offset: -2px;
+    z-index: 7;
+    animation: pulseOrange 1.4s ease-in-out infinite;
+  }
   @keyframes pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(214,19,95,0.5); }
     50%      { box-shadow: 0 0 0 6px rgba(214,19,95,0); }
   }
+  @keyframes pulseOrange {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,122,0,0.55); }
+    50%      { box-shadow: 0 0 0 8px rgba(255,122,0,0); }
+  }
+  .gap-region.implication-target {
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(255,122,0,0.30) 0,
+      rgba(255,122,0,0.30) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    outline: 2px dashed #ff7a00;
+    outline-offset: -2px;
+  }
+  .gap-region.implication-target .gap-label {
+    background: #ff7a00;
+    color: #fff;
+    border-color: #ff7a00;
+  }
+
+  /* SVG annotation overlay (ghost arrows + implication arrows) */
+  .annotation-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 4;
+    overflow: visible;
+  }
+  .arrow-line {
+    fill: none;
+    stroke: var(--magenta);
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .arrow-line.visible { opacity: 1; }
+  .arrow-line.ghost   { stroke: var(--copper-deep); opacity: 0.85; }
+  .arrow-line.impl    { stroke: #ff7a00; stroke-width: 2.5; }
+
+  /* course detail panel */
+  .detail-panel {
+    background: linear-gradient(180deg, #fbfbfe 0%, #f5f6fa 100%);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 64px;
+  }
+  .detail-panel.empty .detail-content { display: none; }
+  .detail-panel:not(.empty) .detail-empty { display: none; }
+  .detail-empty {
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-style: italic;
+  }
+  .detail-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    align-items: center;
+    width: 100%;
+  }
+  .detail-content .d-name {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--navy);
+    flex: 1 1 240px;
+  }
+  .detail-content .d-name.service { color: var(--copper-deep); }
+  .detail-content .d-row {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .detail-content .d-row strong {
+    color: var(--ink);
+    font-weight: 700;
+    margin-left: 4px;
+  }
+  .detail-content .d-pill {
+    background: var(--navy);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+  .detail-content .d-pill.service { background: var(--copper-deep); }
+  .detail-close {
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 11px;
+    margin-left: auto;
+  }
+  .detail-close:hover { border-color: var(--magenta); color: var(--magenta); }
+
+  /* implication card hover affordance */
+  .impl-card li {
+    cursor: pointer;
+    transition: background 0.15s ease;
+    padding: 10px 6px;
+    border-radius: 4px;
+  }
+  .impl-card li:hover {
+    background: rgba(255,122,0,0.08);
+  }
+  .impl-card.warnings li:hover .pip { background: #ff7a00; }
 
   /* ===== Implications grid ===== */
   .implications {
@@ -541,6 +702,10 @@
   .legend .swatch.joint   { background: var(--purple-tint); border: 1px solid var(--navy); }
   .legend .swatch.service { background: var(--copper-tint); border: 1px solid var(--copper-deep); }
   .legend .swatch.collision { background: var(--white); outline: 2.5px solid var(--magenta); outline-offset: -2px; }
+  .legend .swatch.ghost-sw {
+    background: transparent;
+    border: 2px dashed rgba(26,31,78,0.5);
+  }
   .legend .swatch.gap {
     background-image: repeating-linear-gradient(135deg, rgba(26,31,78,0.4) 0, rgba(26,31,78,0.4) 3px, transparent 3px, transparent 6px);
     border: 1px solid var(--line);
@@ -594,6 +759,19 @@
     </div>
     <div class="panel-body">
 
+      <!-- Course detail panel — populated when a course is clicked -->
+      <div class="detail-panel empty" id="detailPanel">
+        <div class="detail-empty">Click any course tile to see its duration, rank phase, and timing.</div>
+        <div class="detail-content">
+          <span class="d-pill" id="dPill">Joint</span>
+          <span class="d-name" id="dName">—</span>
+          <span class="d-row">Duration: <strong id="dDuration">—</strong></span>
+          <span class="d-row">Rank phase: <strong id="dAnchor">—</strong></span>
+          <span class="d-row">Career years: <strong id="dYears">—</strong></span>
+          <button class="detail-close" id="detailClose">Clear</button>
+        </div>
+      </div>
+
       <!-- JPME header bar -->
       <div class="jpme-bar">
         <div class="jpme-cell">JPME Level 1</div>
@@ -646,9 +824,9 @@
       <div class="legend">
         <span class="lg-item"><span class="swatch joint"></span> Joint Education</span>
         <span class="lg-item"><span class="swatch service"></span> Service Training</span>
-        <span class="lg-item"><span class="swatch collision"></span> Collision / overlap</span>
+        <span class="lg-item"><span class="swatch ghost-sw"></span> Previous (View 01) position</span>
         <span class="lg-item"><span class="swatch gap"></span> Inter-course gap</span>
-        <span class="lg-item" style="margin-left:auto; color:var(--navy); font-weight:600;">Hover any course for details</span>
+        <span class="lg-item" style="margin-left:auto; color:var(--navy); font-weight:600;">Click a course to see details · hover an implication to highlight it on the timeline</span>
       </div>
     </div>
   </div>
@@ -675,6 +853,19 @@
     <span class="restricted">Restricted Access</span>
   </div>
 
+  <!-- SVG overlay for ghost arrows + implication arrows -->
+  <svg class="page-svg-overlay" id="pageSvgOverlay">
+    <defs>
+      <marker id="arrowHeadGhost" viewBox="0 0 10 10" refX="9" refY="5"
+              markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#a06a2e"></path>
+      </marker>
+      <marker id="arrowHeadImpl" viewBox="0 0 10 10" refX="9" refY="5"
+              markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff7a00"></path>
+      </marker>
+    </defs>
+  </svg>
 </div>
 
 <div class="tooltip" id="tooltip"></div>
@@ -711,42 +902,42 @@ const SCENARIOS = {
     title: 'Current Land Officer PME Pathway',
     pill:  'Cadet → Lt Col',
     joint: [
-      { id:'ipc-j',  name:'Indirect Pathway Course',                   start:M(0.5),  end:M(3.5),  duration:'~3 years',  anchor:'Cadet' },
-      { id:'jbc',    name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
-      { id:'jac',    name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
-      { id:'jcsc',   name:'Joint Command and Staff College',           start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col / JPME L3' }
+      { id:'ipc-j', name:'Indirect Pathway Course',                   start:M(0.5),  end:M(3.5),  duration:'~3 years',  anchor:'Cadet' },
+      { id:'jbc',   name:'Joint Basic Course for Junior Officers',    start:M(7.5),  end:M(7.75), duration:'~3 weeks',  anchor:'1st Lieutenant' },
+      { id:'jac',   name:'Joint Advanced Course for Junior Officers', start:M(16.5), end:M(16.75),duration:'~3 weeks',  anchor:'Major' },
+      { id:'jcsc',  name:'Joint Command and Staff College',           start:M(21.5), end:M(22.27),duration:'~40 weeks', anchor:'Lt Col / JPME L3' }
     ],
     service: [
       { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
-      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.5),  duration:'~1 year',   anchor:'Lt entry' },
-      { id:'plt',  name:'Platoon Commander Course',  start:M(4.5),  end:M(4.8),  duration:'~12 weeks', anchor:'Lieutenant' },
-      { id:'coy',  name:'Company Commander Course',  start:M(15.0), end:M(15.42),duration:'~22 weeks', anchor:'Captain (late)' },
-      { id:'bn',   name:'Battalion Commander Course',start:M(20.0), end:M(20.44),duration:'~23 weeks', anchor:'Major (late)' }
+      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.3),  duration:'~1 year',   anchor:'Lt entry' },
+      { id:'plt',  name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
+      { id:'coy',  name:'Company Commander Course',  start:M(14.5), end:M(14.92),duration:'~22 weeks', anchor:'Captain (late)' },
+      { id:'bn',   name:'Battalion Commander Course',start:M(19.4), end:M(19.84),duration:'~23 weeks', anchor:'Major (late)' }
     ],
     gaps: [
-      { row:'service', start:M(4.8),  end:M(15.0), label:'Time spent in unit' },
-      { row:'service', start:M(15.42),end:M(20.0), label:'Time spent in unit' }
+      { row:'service', start:M(5.0),  end:M(14.5), label:'Time spent in unit' },
+      { row:'service', start:M(14.92),end:M(19.4), label:'Time spent in unit' }
     ],
-    /* Current state: only benefits, no implications/risks. */
     warnings: [],
     benefits: [
       { title:'Proper distribution of courses across the continuum',
-        meta:'Joint and service courses balanced from Cadet to Lt Col — no rank carries the entire training burden, and progression is paced.' },
+        meta:'Joint and service courses balanced from Cadet to Lt Col — no rank carries the entire training burden, and progression is paced.',
+        targets: [{type:'course',id:'plt'},{type:'course',id:'coy'},{type:'course',id:'bn'},{type:'course',id:'jbc'},{type:'course',id:'jac'},{type:'course',id:'jcsc'}] },
       { title:'Battalion Commander Course taken right before JCSC',
-        meta:'Graduating from JCSC qualifies officers to assume Battalion Commander appointments — sequencing aligns formal qualification with role assumption.' },
+        meta:'Graduating from JCSC qualifies officers to assume Battalion Commander appointments — sequencing aligns formal qualification with role assumption.',
+        targets: [{type:'course',id:'bn'},{type:'course',id:'jcsc'}] },
       { title:'Each command course aligned to its appropriate rank',
-        meta:'Plt Cmd at Lt, Coy Cmd at Capt, Bn Cmd at Major — officers complete each course at the rank where they will exercise that level of command.' },
+        meta:'Plt Cmd at Lt, Coy Cmd at Capt, Bn Cmd at Major — officers complete each course at the rank where they will exercise that level of command.',
+        targets: [{type:'course',id:'plt'},{type:'course',id:'coy'},{type:'course',id:'bn'}] },
       { title:'Three joint education touchpoints across the career',
-        meta:'JBC at 1st Lieutenant, JAC at Major, JCSC at Lt Col — progressive joint exposure from junior to senior leadership.' },
+        meta:'JBC at 1st Lieutenant, JAC at Major, JCSC at Lt Col — progressive joint exposure from junior to senior leadership.',
+        targets: [{type:'course',id:'jbc'},{type:'course',id:'jac'},{type:'course',id:'jcsc'}] },
       { title:'Substantial time in unit between courses',
-        meta:'Officers spend ~10 years at unit between Plt Cmd and Coy Cmd, building operational expertise before the next formal course.' },
+        meta:'Officers spend ~10 years at unit between Plt Cmd and Coy Cmd, building operational expertise before the next formal course.',
+        targets: [{type:'gap-region',row:'service',start:M(5.0),end:M(14.5)},{type:'gap-region',row:'service',start:M(14.92),end:M(19.4)}] },
       { title:'Hybrid delivery minimises time away from units',
-        meta:'Course delivery model preserves operational presence and unit cohesion while completing required education.' }
-    ],
-    highlights: [
-      { html:'<strong>2 new Joint Courses</strong> (JBC &amp; JAC) close joint-education gaps at junior and mid-career levels.' },
-      { html:'Delivered in a <strong>joint environment</strong> to preserve jointery across services.' },
-      { html:'<strong>Hybrid delivery</strong> minimises time away from units.' }
+        meta:'Course delivery model preserves operational presence and unit cohesion while completing required education.',
+        targets: [] }
     ]
   },
 
@@ -764,14 +955,14 @@ const SCENARIOS = {
     ],
     service: [
       { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
-      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.5),  duration:'~1 year',   anchor:'Lt entry' },
-      { id:'plt',  name:'Platoon Commander Course',  start:M(4.5),  end:M(4.8),  duration:'~12 weeks', anchor:'Lieutenant' },
-      { id:'coy',  name:'Company Commander Course',  start:M(8.0),  end:M(8.42), duration:'~22 weeks', anchor:'1st Lieutenant' },
+      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.3),  duration:'~1 year',   anchor:'Lt entry' },
+      { id:'plt',  name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
+      { id:'coy',  name:'Company Commander Course',  start:M(8.5),  end:M(8.92), duration:'~22 weeks', anchor:'1st Lieutenant' },
       { id:'bn',   name:'Battalion Commander Course',start:M(17.0), end:M(17.44),duration:'~23 weeks', anchor:'Major (early)' }
     ],
     gaps: [
-      { row:'service', start:M(4.8),  end:M(8.0),  label:'~3 years' },
-      { row:'service', start:M(8.42), end:M(17.0), label:'~6 years' },
+      { row:'service', start:M(5.0),  end:M(8.5),  label:'~3 years' },
+      { row:'service', start:M(8.92), end:M(17.0), label:'~6 years' },
       { row:'service', start:M(17.44),end:M(21.5), label:'~5 years' }
     ],
     /* No time overlaps to flag — implications are about same-rank concurrency
@@ -779,33 +970,81 @@ const SCENARIOS = {
     collisions: [],
     warnings: [
       { title:'Coverage Gaps Emerge',
-        meta:'No service or joint courses delivered between 1st Lieutenant – Captain &amp; Major – Lt Colonel — long stretches without formal development.' },
+        meta:'No service or joint courses delivered between 1st Lieutenant – Captain &amp; Major – Lt Colonel — long stretches without formal development.',
+        targets: [
+          {type:'gap-region',row:'service',start:M(8.92),end:M(17.0)},
+          {type:'gap-region',row:'service',start:M(17.44),end:M(21.5)}
+        ]
+      },
       { title:'Concurrent Course Load',
-        meta:'The key joint and service courses are delivered at the same rank — JBC alongside Coy Cmd at 1st Lt, JAC alongside Bn Cmd at Major.' },
+        meta:'The key joint and service courses are delivered at the same rank — JBC alongside Coy Cmd at 1st Lt, JAC alongside Bn Cmd at Major.',
+        targets: [
+          {type:'course',id:'jbc'},
+          {type:'course',id:'coy'},
+          {type:'course',id:'jac'},
+          {type:'course',id:'bn'}
+        ]
+      },
       { title:'Battalion Course Misaligned',
-        meta:'Battalion command requires JCSC (Lt Col), so the Battalion course sits too early — qualification-then-appointment chain is broken.' }
+        meta:'Battalion command requires JCSC (Lt Col), so the Battalion course sits too early — qualification-then-appointment chain is broken.',
+        targets: [
+          {type:'course',id:'bn'},
+          {type:'gap-between',from:'bn',to:'jcsc',row:'service'},
+          {type:'course',id:'jcsc'}
+        ]
+      }
     ],
     benefits: []
   }
 
 };
 
+/* Build ghost (previous-position) tiles dynamically by comparing the
+   active scenario against scenario `current`. */
+function getGhostsFor(scenarioKey, kind) {
+  if (scenarioKey !== 'back') return [];
+  const prev = SCENARIOS.current[kind];
+  const curr = SCENARIOS.back[kind];
+  return curr.flatMap(c => {
+    const old = prev.find(p => p.id === c.id);
+    if (!old) return [];
+    if (old.start === c.start && old.end === c.end) return [];
+    return [{ ...old, ghostFor: c.id }];
+  });
+}
+
 /* ============================================================
    RENDERING
    ============================================================ */
-const TRACK_PADDING_PCT = 0;
+const MIN_TILE_PCT = 4.0;   // smallest visual width for short courses
 function pct(monthValue) {
   return ((monthValue - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
 }
+function tileLeftWidth(course) {
+  const realWidth = pct(course.end) - pct(course.start);
+  const width = Math.max(MIN_TILE_PCT, realWidth);
+  let left = pct(course.start);
+  if (left + width > 100) left = 100 - width;
+  if (left < 0) left = 0;
+  return { left, width };
+}
 
-function renderTrack(trackEl, courses, gaps, collisionPairs, kind) {
-  trackEl.innerHTML = '';
-  // gaps first (background)
+/* Track render is DIFF-BASED:
+   - existing course tiles (matching data-id) are kept and have their
+     style.left / style.width updated, so CSS transitions animate them
+   - new tiles are appended (and faded in)
+   - tiles no longer in the scenario fade out then are removed
+   - ghost tiles (previous-view positions) and gap regions are re-built */
+function renderTrack(trackEl, courses, gaps, collisionPairs, kind, ghosts) {
+  // re-render gap regions
+  trackEl.querySelectorAll('.gap-region').forEach(el => el.remove());
   (gaps || []).filter(g => g.row === kind).forEach(g => {
     const left = pct(g.start);
     const width = pct(g.end) - pct(g.start);
     const div = document.createElement('div');
     div.className = 'gap-region';
+    div.dataset.gapStart = g.start;
+    div.dataset.gapEnd   = g.end;
     div.style.left = left + '%';
     div.style.width = width + '%';
     if (g.label) {
@@ -817,30 +1056,65 @@ function renderTrack(trackEl, courses, gaps, collisionPairs, kind) {
     trackEl.appendChild(div);
   });
 
+  // re-render ghost tiles (always rebuilt — they don't animate)
+  trackEl.querySelectorAll('.course.ghost').forEach(el => el.remove());
+  (ghosts || []).forEach(g => {
+    const { left, width } = tileLeftWidth(g);
+    const el = document.createElement('div');
+    el.className = 'course ghost ' + kind;
+    el.dataset.ghostFor = g.ghostFor;
+    el.style.left = left + '%';
+    el.style.width = width + '%';
+    el.innerHTML = `<span class="course-name">${g.name}</span>`;
+    trackEl.appendChild(el);
+  });
+
   // collision lookup
   const collidingIds = new Set();
   (collisionPairs || []).forEach(([a,b]) => { collidingIds.add(a); collidingIds.add(b); });
 
-  // courses
+  // existing non-ghost course tiles
+  const existing = new Map();
+  trackEl.querySelectorAll('.course[data-id]:not(.ghost)').forEach(el => {
+    existing.set(el.dataset.id, el);
+  });
+
+  const newIds = new Set();
   courses.forEach(c => {
-    const realWidth = pct(c.end) - pct(c.start);
-    const width = Math.max(5.0, realWidth);   // min visual width for readability
-    let left = pct(c.start);
-    if (left + width > 100) left = 100 - width;  // keep tile inside track bounds
-    const el = document.createElement('div');
-    el.className = 'course ' + kind + (collidingIds.has(c.id) ? ' collision' : '');
-    el.style.left = left + '%';
-    el.style.width = width + '%';
-    el.innerHTML = `
-      <span class="course-name" style="position:relative; z-index:1;">${c.name}</span>
-      <span class="course-tag">${c.duration}</span>
-    `;
-    el.dataset.id = c.id;
-    el.dataset.name = c.name;
+    newIds.add(c.id);
+    const isCollision = collidingIds.has(c.id);
+    const { left, width } = tileLeftWidth(c);
+
+    let el = existing.get(c.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.dataset.id = c.id;
+      el.style.opacity = '0';
+      el.style.left = left + '%';
+      el.style.width = width + '%';
+      trackEl.appendChild(el);
+      requestAnimationFrame(() => { el.style.opacity = '1'; });
+    } else {
+      el.style.left = left + '%';
+      el.style.width = width + '%';
+    }
+    el.className = 'course ' + kind + (isCollision ? ' collision' : '');
+    el.dataset.name     = c.name;
     el.dataset.duration = c.duration;
-    el.dataset.anchor = c.anchor || '';
-    el.dataset.collision = collidingIds.has(c.id) ? '1' : '0';
-    trackEl.appendChild(el);
+    el.dataset.anchor   = c.anchor || '';
+    el.dataset.startYear= (c.start / 12).toFixed(1);
+    el.dataset.endYear  = (c.end   / 12).toFixed(1);
+    el.dataset.kind     = kind;
+    el.dataset.collision= isCollision ? '1' : '0';
+    el.innerHTML = `<span class="course-name">${c.name}</span>`;
+  });
+
+  // remove tiles that are no longer in scenario
+  existing.forEach((el, id) => {
+    if (!newIds.has(id)) {
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 350);
+    }
   });
 }
 
@@ -849,20 +1123,22 @@ function renderImplications(scenario) {
   const bEl = document.getElementById('benefitsList');
   wEl.innerHTML = '';
   bEl.innerHTML = '';
-  scenario.warnings.forEach((w,i) => {
+
+  const buildItem = (item, sym, idx, listKind) => {
     const li = document.createElement('li');
+    li.dataset.kind = listKind;
+    li.dataset.idx  = idx;
     li.innerHTML = `
-      <span class="pip">!</span>
-      <span class="impl-text"><strong>${w.title}</strong><span class="meta">${w.meta}</span></span>`;
-    wEl.appendChild(li);
-  });
-  scenario.benefits.forEach((b,i) => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span class="pip">✓</span>
-      <span class="impl-text"><strong>${b.title}</strong><span class="meta">${b.meta}</span></span>`;
-    bEl.appendChild(li);
-  });
+      <span class="pip">${sym}</span>
+      <span class="impl-text"><strong>${item.title}</strong><span class="meta">${item.meta}</span></span>`;
+    li.addEventListener('mouseenter', () => highlightImplication(li, item.targets || []));
+    li.addEventListener('mouseleave', () => clearImplicationHighlights());
+    li.addEventListener('click',      () => highlightImplication(li, item.targets || [], true));
+    return li;
+  };
+
+  scenario.warnings.forEach((w,i) => wEl.appendChild(buildItem(w, '!', i, 'warning')));
+  scenario.benefits.forEach((b,i) => bEl.appendChild(buildItem(b, '✓', i, 'benefit')));
 }
 
 const SCENARIO_CAPTION = {
@@ -870,7 +1146,10 @@ const SCENARIO_CAPTION = {
   back:    'Proposed Pathway'
 };
 
+let CURRENT_SCENARIO = 'current';
+
 function applyScenario(key) {
+  CURRENT_SCENARIO = key;
   const sc = SCENARIOS[key];
   document.getElementById('timelineTitle').textContent = 'Course Timeline';
   document.getElementById('timelinePill').textContent = sc.pill;
@@ -878,11 +1157,15 @@ function applyScenario(key) {
   const caption = document.getElementById('scenarioCaption');
   caption.textContent = SCENARIO_CAPTION[key] || '';
   caption.dataset.scenario = key;
-  renderTrack(document.getElementById('jointTrack'),   sc.joint,   sc.gaps, sc.collisions, 'joint');
-  renderTrack(document.getElementById('serviceTrack'), sc.service, sc.gaps, sc.collisions, 'service');
+
+  const jointGhosts   = getGhostsFor(key, 'joint');
+  const serviceGhosts = getGhostsFor(key, 'service');
+
+  renderTrack(document.getElementById('jointTrack'),   sc.joint,   sc.gaps, sc.collisions, 'joint',   jointGhosts);
+  renderTrack(document.getElementById('serviceTrack'), sc.service, sc.gaps, sc.collisions, 'service', serviceGhosts);
   renderImplications(sc);
 
-  // hide whichever panel has no items
+  // panel visibility
   const implEl = document.getElementById('implications');
   const benefitsOnly = !sc.warnings || sc.warnings.length === 0;
   const warningsOnly = !sc.benefits || sc.benefits.length === 0;
@@ -892,43 +1175,199 @@ function applyScenario(key) {
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.scenario === key);
   });
-  attachTooltipHandlers();
+
+  // selection / arrows reset
+  clearSelection();
+  clearImplicationHighlights();
+
+  // ghost arrows (only on view 2)
+  setTimeout(drawGhostArrows, 80);  // wait for reflow + transitions to settle
 }
 
 /* ============================================================
-   TOOLTIP
+   COURSE SELECTION + DETAIL PANEL
    ============================================================ */
-const tip = document.getElementById('tooltip');
-function attachTooltipHandlers() {
-  document.querySelectorAll('.course').forEach(el => {
-    el.addEventListener('mouseenter', e => {
-      const collision = el.dataset.collision === '1';
-      tip.innerHTML = `
-        <strong>${el.dataset.name}</strong>
-        <span class="t-meta">Duration: ${el.dataset.duration}</span>
-        ${el.dataset.anchor ? `<span class="t-meta">Phase: ${el.dataset.anchor}</span>` : ''}
-        ${collision ? `<span class="t-meta" style="color:#ff86a8;">⚠ Overlaps another course in this scenario</span>` : ''}
-      `;
-      tip.classList.add('show');
-    });
-    el.addEventListener('mousemove', e => {
-      const rect = tip.getBoundingClientRect();
-      let x = e.clientX + 14;
-      let y = e.clientY + 14;
-      if (x + rect.width > window.innerWidth - 12) x = e.clientX - rect.width - 14;
-      tip.style.left = x + 'px';
-      tip.style.top  = y + 'px';
-    });
-    el.addEventListener('mouseleave', () => tip.classList.remove('show'));
+function selectCourse(courseEl) {
+  if (!courseEl || courseEl.classList.contains('ghost')) return;
+  document.querySelectorAll('.course.selected').forEach(el => el.classList.remove('selected'));
+  courseEl.classList.add('selected');
+
+  const panel = document.getElementById('detailPanel');
+  panel.classList.remove('empty');
+  const kind = courseEl.dataset.kind;
+  const pill = document.getElementById('dPill');
+  pill.textContent = kind === 'joint' ? 'Joint Education' : 'Service Training';
+  pill.className = 'd-pill' + (kind === 'service' ? ' service' : '');
+
+  const name = document.getElementById('dName');
+  name.textContent = courseEl.dataset.name;
+  name.className   = 'd-name' + (kind === 'service' ? ' service' : '');
+  document.getElementById('dDuration').textContent = courseEl.dataset.duration || '—';
+  document.getElementById('dAnchor').textContent   = courseEl.dataset.anchor || '—';
+  document.getElementById('dYears').textContent    = `Year ${courseEl.dataset.startYear} → ${courseEl.dataset.endYear}`;
+}
+function clearSelection() {
+  document.querySelectorAll('.course.selected').forEach(el => el.classList.remove('selected'));
+  document.getElementById('detailPanel').classList.add('empty');
+}
+
+/* ============================================================
+   ARROWS — SVG overlay
+   ============================================================ */
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function clearArrows(filter) {
+  const svg = document.getElementById('pageSvgOverlay');
+  svg.querySelectorAll('path.arrow-line' + (filter ? '.' + filter : '')).forEach(p => p.remove());
+}
+
+function pageRelativePoint(rect, side) {
+  const pageRect = document.querySelector('.page').getBoundingClientRect();
+  const x = (side === 'left'  ? rect.left  :
+             side === 'right' ? rect.right :
+             rect.left + rect.width / 2) - pageRect.left;
+  const y = (side === 'top'   ? rect.top    :
+             side === 'bottom'? rect.bottom :
+             rect.top + rect.height / 2) - pageRect.top;
+  return { x, y };
+}
+
+function drawCurvedArrow(svg, from, to, cls) {
+  const path = document.createElementNS(SVG_NS, 'path');
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const cp1 = { x: from.x + dx * 0.3, y: from.y + dy * 0.1 - Math.min(120, Math.abs(dx)*0.4) };
+  const cp2 = { x: to.x   - dx * 0.3, y: to.y   - dy * 0.1 - Math.min(120, Math.abs(dx)*0.4) };
+  path.setAttribute('d', `M ${from.x} ${from.y} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${to.x} ${to.y}`);
+  path.setAttribute('class', 'arrow-line ' + cls + ' visible');
+  if (cls.includes('impl'))  path.setAttribute('marker-end', 'url(#arrowHeadImpl)');
+  if (cls.includes('ghost')) path.setAttribute('marker-end', 'url(#arrowHeadGhost)');
+  svg.appendChild(path);
+  return path;
+}
+
+function drawGhostArrows() {
+  clearArrows('ghost');
+  if (CURRENT_SCENARIO !== 'back') return;
+  const svg = document.getElementById('pageSvgOverlay');
+  document.querySelectorAll('.course.ghost').forEach(ghost => {
+    const refId = ghost.dataset.ghostFor;
+    const target = document.querySelector(`.course[data-id="${refId}"]:not(.ghost)`);
+    if (!target) return;
+    const gRect = ghost.getBoundingClientRect();
+    const tRect = target.getBoundingClientRect();
+    const from = pageRelativePoint(gRect, 'right');
+    const to   = pageRelativePoint(tRect, 'left');
+    drawCurvedArrow(svg, from, to, 'ghost');
   });
 }
 
+function highlightImplication(li, targets, persist) {
+  clearImplicationHighlights();
+  if (persist) li.classList.add('impl-active');
+  const svg = document.getElementById('pageSvgOverlay');
+  const liRect = li.getBoundingClientRect();
+  const fromTop = pageRelativePoint(liRect, 'top');
+  fromTop.x = liRect.left + liRect.width / 2 - document.querySelector('.page').getBoundingClientRect().left;
+
+  targets.forEach(t => {
+    let targetEl = null;
+    if (t.type === 'course') {
+      targetEl = document.querySelector(`.course[data-id="${t.id}"]:not(.ghost)`);
+      if (targetEl) targetEl.classList.add('implication-target');
+    } else if (t.type === 'gap-region') {
+      // find a gap region with matching start/end in the appropriate row
+      const rowId = t.row === 'joint' ? 'jointTrack' : 'serviceTrack';
+      const track = document.getElementById(rowId);
+      const gaps = track.querySelectorAll('.gap-region');
+      gaps.forEach(g => {
+        if (Math.abs(parseFloat(g.dataset.gapStart) - t.start) < 0.5 &&
+            Math.abs(parseFloat(g.dataset.gapEnd)   - t.end)   < 0.5) {
+          g.classList.add('implication-target');
+          if (!targetEl) targetEl = g;
+        }
+      });
+    } else if (t.type === 'gap-between') {
+      // the empty space between two course tiles in the same row — synthesize a target rect
+      const rowId = t.row === 'joint' ? 'jointTrack' : 'serviceTrack';
+      const fromCourse = document.querySelector(`.course[data-id="${t.from}"]:not(.ghost)`);
+      const toCourse   = document.querySelector(`.course[data-id="${t.to}"]:not(.ghost)`);
+      if (fromCourse && toCourse) {
+        const a = fromCourse.getBoundingClientRect();
+        const b = toCourse.getBoundingClientRect();
+        targetEl = { getBoundingClientRect: () => ({
+          left:   a.right,
+          right:  b.left,
+          top:    Math.min(a.top, b.top),
+          bottom: Math.max(a.bottom, b.bottom),
+          width:  Math.max(8, b.left - a.right),
+          height: Math.max(a.height, b.height)
+        })};
+      }
+    }
+    if (targetEl) {
+      const tRect = targetEl.getBoundingClientRect();
+      const to = pageRelativePoint(tRect, 'top');
+      drawCurvedArrow(svg, fromTop, to, 'impl');
+    }
+  });
+}
+
+function clearImplicationHighlights() {
+  document.querySelectorAll('.implication-target').forEach(el => el.classList.remove('implication-target'));
+  document.querySelectorAll('.impl-card li.impl-active').forEach(el => el.classList.remove('impl-active'));
+  clearArrows('impl');
+}
+
 /* ============================================================
-   INIT
+   TOOLTIP (still useful for quick hover info)
    ============================================================ */
+const tip = document.getElementById('tooltip');
+document.addEventListener('mouseover', e => {
+  const el = e.target.closest('.course');
+  if (!el || el.classList.contains('ghost')) return;
+  tip.innerHTML = `
+    <strong>${el.dataset.name}</strong>
+    <span class="t-meta">Click for full details</span>
+  `;
+  tip.classList.add('show');
+});
+document.addEventListener('mousemove', e => {
+  if (!tip.classList.contains('show')) return;
+  const rect = tip.getBoundingClientRect();
+  let x = e.clientX + 14;
+  let y = e.clientY + 14;
+  if (x + rect.width > window.innerWidth - 12) x = e.clientX - rect.width - 14;
+  tip.style.left = x + 'px';
+  tip.style.top  = y + 'px';
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('.course')) tip.classList.remove('show');
+});
+
+/* ============================================================
+   INTERACTIONS
+   ============================================================ */
+document.addEventListener('click', e => {
+  const courseEl = e.target.closest('.course:not(.ghost)');
+  if (courseEl) { selectCourse(courseEl); return; }
+  // clicks outside a course tile / impl card clear selection
+  if (!e.target.closest('.detail-panel') && !e.target.closest('.impl-card li') && !e.target.closest('.tab')) {
+    // do nothing — keep selection on background clicks
+  }
+});
+
+document.getElementById('detailClose').addEventListener('click', clearSelection);
+
 document.querySelectorAll('.tab').forEach(t => {
   t.addEventListener('click', () => applyScenario(t.dataset.scenario));
 });
+
+window.addEventListener('resize', () => {
+  drawGhostArrows();
+  clearImplicationHighlights();
+});
+
 applyScenario('current');
 </script>
 </body>
