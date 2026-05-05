@@ -354,34 +354,80 @@
     overflow: hidden;
   }
 
-  /* dotted shaded gap regions (rendered absolute, BEHIND course tiles) */
-  .gap-region {
+  /* ===== Gaps band (between joint and service rows) =====
+     The gap labels live OUTSIDE either course track so they cannot
+     collide with course tiles. Each marker spans its gap horizontally,
+     with a dashed line on either side of a centred year-label badge. */
+  .gaps-band {
+    margin-left: 160px;
+    height: 36px;
+    position: relative;
+    background: linear-gradient(180deg, rgba(245,246,250,0) 0%, rgba(232,234,243,0.7) 50%, rgba(245,246,250,0) 100%);
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .gap-marker {
     position: absolute;
     top: 0; bottom: 0;
-    z-index: 1;
-    background-image: repeating-linear-gradient(
-      135deg,
-      rgba(26,31,78,0.06) 0,
-      rgba(26,31,78,0.06) 6px,
-      transparent 6px,
-      transparent 12px
-    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
     pointer-events: none;
   }
-  .gap-region .gap-label {
+  .gap-marker::before,
+  .gap-marker::after {
+    content: '';
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 11.5px;
-    color: var(--navy);
-    font-weight: 600;
-    background: rgba(255,255,255,0.85);
-    padding: 2px 8px;
-    border-radius: 4px;
-    border: 1px dashed rgba(26,31,78,0.3);
-    white-space: nowrap;
+    height: 0;
+    border-top: 1.5px dashed rgba(26,31,78,0.45);
+    width: calc(50% - 38px);
+    transform: translateY(-50%);
   }
+  .gap-marker::before { left: 4px; }
+  .gap-marker::after  { right: 4px; }
+  /* arrow caps at line ends */
+  .gap-marker .cap-left,
+  .gap-marker .cap-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(26,31,78,0.55);
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .gap-marker .cap-left  { left: 0; }
+  .gap-marker .cap-right { right: 0; }
+  .gap-text {
+    background: var(--white);
+    color: var(--navy);
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    pointer-events: auto;
+    z-index: 2;
+  }
+  .gap-marker.implication-target::before,
+  .gap-marker.implication-target::after {
+    border-top-color: #ff7a00;
+    border-top-width: 2.5px;
+  }
+  .gap-marker.implication-target .cap-left,
+  .gap-marker.implication-target .cap-right { color: #ff7a00; }
+  .gap-marker.implication-target .gap-text {
+    background: #ff7a00;
+    color: #fff;
+    border-color: #ff7a00;
+    box-shadow: 0 2px 8px rgba(255,122,0,0.35);
+  }
+
+  /* legacy gap-region kept hidden for backward compat */
+  .gap-region { display: none; }
 
   /* course tile — always rendered ABOVE gap regions (z-index 4+) */
   .course {
@@ -456,14 +502,19 @@
     border-top: 4px solid var(--copper-deep);
     color: #5a3d1a;
   }
-  /* sub-row: tile floats in the upper half of the row.
-     Used for the Service Indirect Pathway Course so it sits visually
-     above the Direct Pathway Course rather than overlapping it. */
+  /* sub-rows: split the service Cadet phase into Indirect (top) and
+     Direct (bottom) so both pathways are fully visible without overlap. */
   .course.subrow-top {
-    top: 6px;
+    top: 8px;
     bottom: auto;
-    height: 48%;
-    z-index: 5;   /* above siblings in the same row */
+    height: calc(50% - 10px);
+    z-index: 5;
+  }
+  .course.subrow-bottom {
+    top: calc(50% + 2px);
+    bottom: 8px;
+    height: calc(50% - 10px);
+    z-index: 5;
   }
 
   .course.selected {
@@ -740,6 +791,7 @@
   }
   .implications.benefits-only .impl-card.warnings { display: none; }
   .implications.warnings-only .impl-card.benefits { display: none; }
+  .implications.implications-hidden { display: none; }
   .impl-card {
     background: var(--white);
     border-radius: 10px;
@@ -847,8 +899,20 @@
     border: 2px dashed rgba(26,31,78,0.5);
   }
   .legend .swatch.gap {
-    background-image: repeating-linear-gradient(135deg, rgba(26,31,78,0.4) 0, rgba(26,31,78,0.4) 3px, transparent 3px, transparent 6px);
-    border: 1px solid var(--line);
+    background: var(--white);
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 999px;
+    width: 22px;
+    position: relative;
+  }
+  .legend .swatch.gap::before {
+    content: '~3y';
+    font-size: 7px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   @media (max-width: 1100px) {
@@ -943,6 +1007,10 @@
         </div>
         <div class="row-track" id="jointTrack"></div>
       </div>
+
+      <!-- Gaps band: year labels between any two consecutive courses,
+           rendered between the rows so they never overlap a course tile. -->
+      <div class="gaps-band" id="gapsBand"></div>
 
       <!-- Service Training row -->
       <div class="row service">
@@ -1066,7 +1134,7 @@ const SCENARIOS = {
     ],
     service: [
       /* Direct Pathway starts 1 year after Indirect, both end at Lt entry M(4) */
-      { id:'dpc',  short:'Direct Pathway',     name:'Direct Pathway Course',     start:M(1),    end:M(4),    duration:'3 years',   anchor:'Cadet' },
+      { id:'dpc',  short:'Direct Pathway',     name:'Direct Pathway Course',     start:M(1),    end:M(4),    duration:'3 years',   anchor:'Cadet', subrow:'bottom' },
       /* Indirect Pathway service portion: 1 year following the joint indirect course */
       { id:'ipc-s',short:'Indirect Pathway',   name:'Indirect Pathway Course',   start:M(3),    end:M(4),    duration:'~1 year',   anchor:'Cadet (late)', subrow:'top' },
       { id:'plt',  short:'Platoon Cmd Course', name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
@@ -1154,12 +1222,7 @@ SCENARIOS.custom.title = 'Custom Land Officer PME Pathway';
 SCENARIOS.custom.pill  = 'Drag courses to test new sequencing';
 SCENARIOS.custom.draggable = true;
 SCENARIOS.custom.warnings = [];
-SCENARIOS.custom.benefits = [
-  { title:'How to use this view',
-    meta:'Click and drag any course tile horizontally to reposition it on the timeline. Each gap label between consecutive courses recalculates automatically as you move them.', targets: [] },
-  { title:'Years are measured between any two consecutive courses',
-    meta:'The timeline treats joint and service courses as a single sequence. The label between two tiles always shows the time spent in unit between the end of one course and the start of the next.', targets: [] }
-];
+SCENARIOS.custom.benefits = [];
 
 /* ============================================================
    AUTO-COMPUTE GAPS BETWEEN ALL COURSES (joint + service merged)
@@ -1378,12 +1441,39 @@ function rerenderTimelineForCurrentScenario() {
   sc.gaps = computeAllGaps(sc);
   const jointGhosts   = getGhostsFor(CURRENT_SCENARIO, 'joint');
   const serviceGhosts = getGhostsFor(CURRENT_SCENARIO, 'service');
+  // gaps are rendered in a separate band, NOT inside row tracks
   renderTrack(document.getElementById('jointTrack'),
-              sc.joint, sc.gaps, sc.collisions, 'joint',
-              jointGhosts, /* showGapLabels */ false, !!sc.draggable);
+              sc.joint, [], sc.collisions, 'joint',
+              jointGhosts, false, !!sc.draggable);
   renderTrack(document.getElementById('serviceTrack'),
-              sc.service, sc.gaps, sc.collisions, 'service',
-              serviceGhosts, /* showGapLabels */ true, !!sc.draggable);
+              sc.service, [], sc.collisions, 'service',
+              serviceGhosts, false, !!sc.draggable);
+  renderGapsBand(sc.gaps);
+}
+
+function renderGapsBand(gaps) {
+  const band = document.getElementById('gapsBand');
+  if (!band) return;
+  band.innerHTML = '';
+  (gaps || []).forEach(g => {
+    const left  = pct(g.start);
+    const width = pct(g.end) - pct(g.start);
+    if (width <= 0) return;
+    const div = document.createElement('div');
+    div.className = 'gap-marker';
+    div.dataset.gapStart = g.start;
+    div.dataset.gapEnd   = g.end;
+    if (g.fromCourse) div.dataset.gapFrom = g.fromCourse;
+    if (g.toCourse)   div.dataset.gapTo   = g.toCourse;
+    div.style.left = left + '%';
+    div.style.width = width + '%';
+    div.innerHTML = `
+      <span class="cap-left">‹</span>
+      <span class="gap-text">${g.label}</span>
+      <span class="cap-right">›</span>
+    `;
+    band.appendChild(div);
+  });
 }
 
 function applyScenario(key) {
@@ -1402,10 +1492,11 @@ function applyScenario(key) {
 
   // panel visibility
   const implEl = document.getElementById('implications');
-  const benefitsOnly = !sc.warnings || sc.warnings.length === 0;
-  const warningsOnly = !sc.benefits || sc.benefits.length === 0;
-  implEl.classList.toggle('benefits-only', benefitsOnly && !warningsOnly);
-  implEl.classList.toggle('warnings-only', warningsOnly && !benefitsOnly);
+  const noWarnings = !sc.warnings || sc.warnings.length === 0;
+  const noBenefits = !sc.benefits || sc.benefits.length === 0;
+  implEl.classList.toggle('implications-hidden', noWarnings && noBenefits);
+  implEl.classList.toggle('benefits-only', noWarnings && !noBenefits);
+  implEl.classList.toggle('warnings-only', noBenefits && !noWarnings);
 
   // custom-mode helper banner toggle
   document.body.classList.toggle('custom-mode', key === 'custom');
@@ -1419,8 +1510,9 @@ function applyScenario(key) {
   PINNED_IMPL = null;
   clearImplicationHighlights();
 
-  // ghost arrows (only on view 2) — wait for reflow + transitions to settle
-  setTimeout(drawGhostArrows, 80);
+  /* Ghost ARROWS removed per latest direction. Ghost TILES remain so
+     users can still see where each course used to sit. */
+  clearArrows('ghost');
 }
 
 /* ============================================================
@@ -1508,33 +1600,8 @@ document.addEventListener('mouseup', () => {
 });
 
 function renderGapsOnly(sc) {
-  const jointTrack   = document.getElementById('jointTrack');
-  const serviceTrack = document.getElementById('serviceTrack');
-  // joint row: gaps without labels
-  jointTrack.querySelectorAll('.gap-region').forEach(el => el.remove());
-  serviceTrack.querySelectorAll('.gap-region').forEach(el => el.remove());
-  (sc.gaps || []).forEach(g => {
-    const left = pct(g.start);
-    const width = pct(g.end) - pct(g.start);
-    if (width <= 0) return;
-    [[jointTrack,false],[serviceTrack,true]].forEach(([track,withLabel]) => {
-      const div = document.createElement('div');
-      div.className = 'gap-region';
-      div.dataset.gapStart = g.start;
-      div.dataset.gapEnd   = g.end;
-      if (g.fromCourse) div.dataset.gapFrom = g.fromCourse;
-      if (g.toCourse)   div.dataset.gapTo   = g.toCourse;
-      div.style.left = left + '%';
-      div.style.width = width + '%';
-      if (g.label && withLabel) {
-        const lbl = document.createElement('span');
-        lbl.className = 'gap-label';
-        lbl.textContent = g.label;
-        div.appendChild(lbl);
-      }
-      track.appendChild(div);
-    });
-  });
+  // delegate to the dedicated gap band — labels live BETWEEN the rows
+  renderGapsBand(sc.gaps);
 }
 
 /* ============================================================
@@ -1601,35 +1668,24 @@ function highlightImplication(li, targets, persist) {
     if (t.type === 'course') {
       targetEl = document.querySelector(`.course[data-id="${t.id}"]:not(.ghost)`);
       if (targetEl) targetEl.classList.add('implication-target');
-    } else if (t.type === 'gap-region') {
-      // find a gap region with matching start/end in the appropriate row
-      const rowId = t.row === 'joint' ? 'jointTrack' : 'serviceTrack';
-      const track = document.getElementById(rowId);
-      const gaps = track.querySelectorAll('.gap-region');
-      gaps.forEach(g => {
-        if (Math.abs(parseFloat(g.dataset.gapStart) - t.start) < 0.5 &&
-            Math.abs(parseFloat(g.dataset.gapEnd)   - t.end)   < 0.5) {
-          g.classList.add('implication-target');
-          if (!targetEl) targetEl = g;
+    } else if (t.type === 'gap-region' || t.type === 'gap-between') {
+      // gap markers live in the dedicated band between rows. Find one whose
+      // dataset references the same course pair (gap-between) or the same
+      // start/end window (gap-region).
+      const markers = document.querySelectorAll('#gapsBand .gap-marker');
+      markers.forEach(m => {
+        let match = false;
+        if (t.type === 'gap-between') {
+          match = m.dataset.gapFrom === t.from && m.dataset.gapTo === t.to;
+        } else {
+          match = Math.abs(parseFloat(m.dataset.gapStart) - t.start) < 0.5 &&
+                  Math.abs(parseFloat(m.dataset.gapEnd)   - t.end)   < 0.5;
+        }
+        if (match) {
+          m.classList.add('implication-target');
+          if (!targetEl) targetEl = m;
         }
       });
-    } else if (t.type === 'gap-between') {
-      // the empty space between two course tiles in the same row — synthesize a target rect
-      const rowId = t.row === 'joint' ? 'jointTrack' : 'serviceTrack';
-      const fromCourse = document.querySelector(`.course[data-id="${t.from}"]:not(.ghost)`);
-      const toCourse   = document.querySelector(`.course[data-id="${t.to}"]:not(.ghost)`);
-      if (fromCourse && toCourse) {
-        const a = fromCourse.getBoundingClientRect();
-        const b = toCourse.getBoundingClientRect();
-        targetEl = { getBoundingClientRect: () => ({
-          left:   a.right,
-          right:  b.left,
-          top:    Math.min(a.top, b.top),
-          bottom: Math.max(a.bottom, b.bottom),
-          width:  Math.max(8, b.left - a.right),
-          height: Math.max(a.height, b.height)
-        })};
-      }
     }
     if (targetEl) {
       const tRect = targetEl.getBoundingClientRect();
@@ -1642,6 +1698,7 @@ function highlightImplication(li, targets, persist) {
 function clearImplicationHighlights() {
   document.querySelectorAll('.implication-target').forEach(el => el.classList.remove('implication-target'));
   document.querySelectorAll('.impl-card li.impl-active').forEach(el => el.classList.remove('impl-active'));
+  document.querySelectorAll('.gap-marker.implication-target').forEach(el => el.classList.remove('implication-target'));
   clearArrows('impl');
 }
 
