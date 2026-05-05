@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Course Pathway Analysis — JPME &amp; Service Training</title>
+<style>
+  /* ===== Brand palette ===== */
+  :root {
+    --navy:        #1a1f4e;
+    --navy-deep:   #11163a;
+    --navy-mid:    #2d3372;
+    --purple:      #5b5ea6;
+    --purple-soft: #b4b0e0;
+    --purple-tint: #e3e1f1;
+    --copper:      #c4894a;
+    --copper-deep: #a06a2e;
+    --copper-soft: #e8c79c;
+    --copper-tint: #f4e6d1;
+    --magenta:     #d6135f;
+    --magenta-soft:#f7c8d9;
+    --ink:         #1d1f2b;
+    --ink-soft:    #555868;
+    --line:        #d8d9e1;
+    --bg:          #f5f6fa;
+    --white:       #ffffff;
+    --warn:        #c0392b;
+    --warn-soft:   #fbe2dd;
+    --good:        #1f8a52;
+    --good-soft:   #d6f0e2;
+    --neutral:     #6c757d;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Layout ===== */
+  .page {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 28px 32px 64px;
+  }
+
+  /* ===== Header ===== */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 3px solid var(--navy);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    margin: 0 0 4px;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.2px;
+  }
+  .header .subtitle {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .brand-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+  .brand-mark .dot {
+    width: 14px; height: 14px;
+    background: var(--magenta);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* ===== Scenario tabs ===== */
+  .scenario-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .tab {
+    cursor: pointer;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 18px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .tab::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--line);
+    transition: background 0.2s ease;
+  }
+  .tab:hover { border-color: var(--purple); transform: translateY(-1px); }
+  .tab.active {
+    border-color: var(--navy);
+    box-shadow: 0 4px 14px rgba(26,31,78,0.16);
+  }
+  .tab.active::before { background: var(--magenta); }
+  .tab .tab-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .tab .tab-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 4px 0 4px;
+  }
+  .tab .tab-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  /* ===== Timeline panel ===== */
+  .panel {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(20,24,60,0.06);
+    padding: 0;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .panel-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 22px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-header .pill {
+    background: rgba(255,255,255,0.16);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .panel-body { padding: 22px 26px 28px; }
+
+  /* ===== JPME header bar — proportions match rank phases:
+         Level 1 (Cadet 20%), Level 2 (Lt+1stLt+Capt 60%), Level 3 (Major 20%) ===== */
+  .jpme-bar {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    gap: 4px;
+    margin-left: 160px; /* offsets for left label column */
+    margin-bottom: 6px;
+  }
+  .jpme-cell {
+    text-align: center;
+    color: var(--white);
+    background: var(--navy);
+    padding: 8px 6px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px 4px 0 0;
+  }
+  .jpme-cell.lvl2 { background: var(--navy-mid); }
+
+  /* ===== Rank ribbon ===== */
+  .rank-ribbon {
+    margin-left: 160px;
+    height: 36px;
+    background: linear-gradient(90deg, var(--purple-tint) 0%, #cfcde6 100%);
+    border-radius: 18px;
+    position: relative;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0 0 0 1px rgba(26,31,78,0.08);
+  }
+  .rank-ribbon::before, .rank-ribbon::after {
+    content: '«';
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    color: var(--navy);
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .rank-ribbon::before { left: 8px; }
+  .rank-ribbon::after { right: 8px; content: '»'; }
+  .rank-marker {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle at 30% 30%, #6e7197, #2d3372);
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+  .rank-segment-label {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--navy);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .rank-names {
+    margin-left: 160px;
+    display: flex;
+    margin-bottom: 14px;
+    height: 22px;
+    position: relative;
+  }
+  .rank-name {
+    position: absolute;
+    transform: translateX(-50%);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ===== Course rows ===== */
+  .row {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 6px;
+  }
+  .row-label {
+    width: 160px;
+    flex: 0 0 160px;
+    color: var(--white);
+    padding: 18px 14px;
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .row-label .label-title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .row-label .label-icon {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+  .row.joint .row-label { background: linear-gradient(180deg, #4a4d8c 0%, var(--navy) 100%); }
+  .row.service .row-label { background: linear-gradient(180deg, var(--copper) 0%, var(--copper-deep) 100%); }
+
+  .row-track {
+    flex: 1;
+    position: relative;
+    background: #fafafc;
+    border: 1px solid var(--line);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    min-height: 132px;
+    overflow: hidden;
+  }
+
+  /* dotted shaded gap regions (rendered absolute) */
+  .gap-region {
+    position: absolute;
+    top: 0; bottom: 0;
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(26,31,78,0.06) 0,
+      rgba(26,31,78,0.06) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    pointer-events: none;
+  }
+  .gap-region .gap-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 11.5px;
+    color: var(--navy);
+    font-weight: 600;
+    background: rgba(255,255,255,0.85);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px dashed rgba(26,31,78,0.3);
+    white-space: nowrap;
+  }
+
+  /* course tile */
+  .course {
+    position: absolute;
+    top: 14px;
+    bottom: 14px;
+    border-radius: 6px;
+    padding: 8px 8px 24px;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.18;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: flex-start;
+  }
+  .course .course-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  .course:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    z-index: 5;
+  }
+  .course .course-tag {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 4px 8px;
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.4px;
+  }
+  .course.joint { background: var(--purple-tint); }
+  .course.joint .course-tag { background: var(--navy); }
+  .course.service { background: var(--copper-tint); }
+  .course.service .course-tag { background: var(--copper-deep); }
+  .course.collision {
+    outline: 2.5px solid var(--magenta);
+    outline-offset: -2px;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(214,19,95,0.5); }
+    50%      { box-shadow: 0 0 0 6px rgba(214,19,95,0); }
+  }
+
+  /* ===== Implications grid ===== */
+  .implications {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 18px;
+  }
+  .impl-card {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(20,24,60,0.06);
+    overflow: hidden;
+  }
+  .impl-card .card-header {
+    padding: 12px 18px;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .impl-card.warnings .card-header { background: var(--magenta); }
+  .impl-card.benefits .card-header { background: var(--good); }
+  .impl-card .card-body {
+    padding: 14px 18px 18px;
+  }
+  .impl-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .impl-card li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+    color: var(--ink);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .impl-card li:last-child { border-bottom: none; }
+  .impl-card li .pip {
+    flex: 0 0 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .impl-card.warnings .pip { background: var(--magenta); }
+  .impl-card.benefits .pip { background: var(--good); }
+  .impl-card li .impl-text strong { color: var(--navy); }
+  .impl-card li .impl-text .meta {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  /* ===== Highlights bar ===== */
+  .highlights {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr 1fr;
+    gap: 18px;
+    align-items: center;
+  }
+  .highlights .h-label {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    line-height: 1.25;
+  }
+  .highlights .h-card {
+    background: rgba(255,255,255,0.08);
+    border-left: 3px solid var(--magenta);
+    padding: 12px 14px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    line-height: 1.4;
+  }
+  .highlights .h-card strong { color: #ffd6e3; }
+
+  /* ===== SPME Reference panel ===== */
+  .spme-panel { margin-top: 22px; }
+  .spme-banner {
+    background: var(--magenta);
+    color: var(--white);
+    text-align: center;
+    padding: 8px;
+    font-style: italic;
+    font-weight: 700;
+    border-radius: 8px 8px 0 0;
+    letter-spacing: 0.4px;
+  }
+  .spme-grid {
+    background: var(--white);
+    border-radius: 0 0 8px 8px;
+    padding: 18px;
+    box-shadow: 0 2px 10px rgba(20,24,60,0.06);
+  }
+  .spme-row {
+    display: grid;
+    grid-template-columns: 110px repeat(5, 1fr) 0.4fr;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .spme-row .row-name {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 12.5px;
+    align-self: center;
+    padding-left: 4px;
+  }
+  .arrow-cell {
+    background: var(--copper-soft);
+    color: var(--ink);
+    padding: 12px 18px 12px 14px;
+    font-weight: 700;
+    font-size: 13px;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
+  }
+  .arrow-cell.darker  { background: var(--copper); color: var(--white); }
+  .arrow-cell.darkest { background: var(--copper-deep); color: var(--white); }
+  .arrow-cell.muted   { background: #e6d4b8; color: #8a6d44; }
+  .arrow-cell.fade    { background: #f0e3cf; color: #ad9377; }
+
+  .spme-courses {
+    display: grid;
+    grid-template-columns: 110px repeat(5, 1fr) 0.4fr;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .course-cell {
+    background: #f7eedc;
+    border-radius: 4px;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+
+  /* tooltip */
+  .tooltip {
+    position: fixed;
+    background: var(--navy-deep);
+    color: var(--white);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 1000;
+    max-width: 280px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip strong { color: #fff; }
+  .tooltip .t-meta {
+    display: block;
+    margin-top: 4px;
+    font-size: 11.5px;
+    color: #c5c8e0;
+  }
+
+  /* legend */
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .legend .lg-item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .swatch {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border-radius: 3px;
+  }
+  .legend .swatch.joint   { background: var(--purple-tint); border: 1px solid var(--navy); }
+  .legend .swatch.service { background: var(--copper-tint); border: 1px solid var(--copper-deep); }
+  .legend .swatch.collision { background: var(--white); outline: 2.5px solid var(--magenta); outline-offset: -2px; }
+  .legend .swatch.gap {
+    background-image: repeating-linear-gradient(135deg, rgba(26,31,78,0.4) 0, rgba(26,31,78,0.4) 3px, transparent 3px, transparent 6px);
+    border: 1px solid var(--line);
+  }
+
+  @media (max-width: 1100px) {
+    .implications { grid-template-columns: 1fr; }
+    .highlights { grid-template-columns: 1fr; }
+    .scenario-tabs { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="brand-mark"><span class="dot"></span> Course Pathway Analysis</div>
+      <h1>JPME &amp; Service Training — Rank Sequencing Comparison</h1>
+      <p class="subtitle">Compare current course timing with proposed rank shifts to identify collisions, prerequisite gaps, and operational impacts.</p>
+    </div>
+    <div class="brand-mark" style="font-size: 11px; opacity: 0.75;">
+      Interactive&nbsp;Model&nbsp;·&nbsp;v1.0
+    </div>
+  </div>
+
+  <!-- SCENARIO TABS -->
+  <div class="scenario-tabs" id="tabs">
+    <div class="tab active" data-scenario="current">
+      <div class="tab-label">Scenario 01</div>
+      <div class="tab-title">Current State</div>
+      <div class="tab-desc">As-is delivery of all JPME and Service courses across the rank progression.</div>
+    </div>
+    <div class="tab" data-scenario="back">
+      <div class="tab-label">Scenario 02</div>
+      <div class="tab-title">Shift Back One Rank</div>
+      <div class="tab-desc">Each course delivered one rank earlier — accelerates leadership prep.</div>
+    </div>
+    <div class="tab" data-scenario="forward">
+      <div class="tab-label">Scenario 03</div>
+      <div class="tab-title">Shift Forward One Rank</div>
+      <div class="tab-desc">Each course delivered one rank later — preserves operational time at junior ranks.</div>
+    </div>
+  </div>
+
+  <!-- TIMELINE PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      <span id="timelineTitle">Course Timeline — Current State</span>
+      <span class="pill" id="timelinePill">Cadet → Major</span>
+    </div>
+    <div class="panel-body">
+
+      <!-- JPME header bar -->
+      <div class="jpme-bar">
+        <div class="jpme-cell">JPME Level 1</div>
+        <div class="jpme-cell lvl2">JPME Level 2</div>
+        <div class="jpme-cell">JPME Level 3</div>
+      </div>
+
+      <!-- Rank ribbon with year segments. Positions are proportional to the
+           20-year career timeline so course tiles line up with rank phases:
+             Cadet 0-20%, Lt 20-35%, 1st Lt 35-55%, Capt 55-80%, Major 80-100%. -->
+      <div class="rank-ribbon" id="rankRibbon">
+        <span class="rank-segment-label" style="left: 10%;">~4 years</span>
+        <span class="rank-segment-label" style="left: 27.5%;">~3 years</span>
+        <span class="rank-segment-label" style="left: 45%;">~4 years</span>
+        <span class="rank-segment-label" style="left: 67.5%;">~5 years</span>
+        <span class="rank-segment-label" style="left: 90%;">~4 years</span>
+        <div class="rank-marker" style="left: 20%;"></div>
+        <div class="rank-marker" style="left: 35%;"></div>
+        <div class="rank-marker" style="left: 55%;"></div>
+        <div class="rank-marker" style="left: 80%;"></div>
+      </div>
+
+      <div class="rank-names">
+        <span class="rank-name" style="left: 20%;">Lieutenant</span>
+        <span class="rank-name" style="left: 35%;">1st Lieutenant</span>
+        <span class="rank-name" style="left: 55%;">Captain</span>
+        <span class="rank-name" style="left: 80%;">Major</span>
+      </div>
+
+      <!-- Joint Education row -->
+      <div class="row joint">
+        <div class="row-label">
+          <div class="label-icon">&#127891;</div>
+          <div class="label-title">Joint<br/>Education</div>
+        </div>
+        <div class="row-track" id="jointTrack"></div>
+      </div>
+
+      <!-- Service Training row -->
+      <div class="row service">
+        <div class="row-label">
+          <div class="label-icon">&#128218;</div>
+          <div class="label-title">Service<br/>Training</div>
+        </div>
+        <div class="row-track" id="serviceTrack"></div>
+      </div>
+
+      <div class="legend">
+        <span class="lg-item"><span class="swatch joint"></span> Joint Education</span>
+        <span class="lg-item"><span class="swatch service"></span> Service Training</span>
+        <span class="lg-item"><span class="swatch collision"></span> Collision / overlap</span>
+        <span class="lg-item"><span class="swatch gap"></span> Inter-course gap</span>
+        <span class="lg-item" style="margin-left:auto; color:var(--navy); font-weight:600;">Hover any course for details</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPLICATIONS -->
+  <div class="implications">
+    <div class="impl-card warnings">
+      <div class="card-header">⚠ Risks &amp; Implications</div>
+      <div class="card-body">
+        <ul id="warningsList"></ul>
+      </div>
+    </div>
+    <div class="impl-card benefits">
+      <div class="card-header">✓ Benefits &amp; Opportunities</div>
+      <div class="card-body">
+        <ul id="benefitsList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY HIGHLIGHTS -->
+  <div class="highlights" id="highlights">
+    <div class="h-label">KEY<br/>HIGHLIGHTS</div>
+    <div class="h-card" id="hl1"></div>
+    <div class="h-card" id="hl2"></div>
+    <div class="h-card" id="hl3"></div>
+  </div>
+
+  <!-- SPME REFERENCE -->
+  <div class="spme-panel">
+    <div class="spme-banner">No official SPME Levels</div>
+    <div class="spme-grid">
+      <div class="spme-row">
+        <div class="row-name">SPME Levels</div>
+        <div class="arrow-cell">Level 1</div>
+        <div class="arrow-cell darker" style="grid-column: span 2;">Level 2</div>
+        <div class="arrow-cell darkest">Level 3</div>
+        <div class="arrow-cell fade">…</div>
+        <div></div>
+      </div>
+      <div class="spme-row">
+        <div class="row-name">Rank</div>
+        <div class="arrow-cell">CADET</div>
+        <div class="arrow-cell darker">LIEUTENANT</div>
+        <div class="arrow-cell darker">FIRST LIEUTENANT</div>
+        <div class="arrow-cell darkest">CAPTAIN</div>
+        <div class="arrow-cell darkest">MAJOR</div>
+        <div class="arrow-cell fade">…</div>
+      </div>
+      <div class="spme-row">
+        <div class="row-name">Time (yrs)</div>
+        <div class="arrow-cell muted">0 → 4</div>
+        <div class="arrow-cell muted">4 → 7</div>
+        <div class="arrow-cell muted">7 → 11</div>
+        <div class="arrow-cell muted">11 → 16</div>
+        <div class="arrow-cell muted">16 → 20</div>
+        <div class="arrow-cell fade">…</div>
+      </div>
+      <div class="spme-courses">
+        <div class="row-name">Courses</div>
+        <div class="course-cell">Commissioning Course</div>
+        <div class="course-cell" style="grid-column: span 2;">Trade-specific Platoon Commander &amp; Service-specific courses</div>
+        <div class="course-cell">Company Commander Course</div>
+        <div class="course-cell">Battalion Commander Course</div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+/* ============================================================
+   COURSE PATHWAY MODEL
+   ------------------------------------------------------------
+   Coordinate system:  x is "career month" 0 → 240 (Cadet to Major end).
+   Rank phases (in months from career start):
+     Cadet:           0   – 48   (years 0-4)   [JPME L1]
+     Lieutenant:      48  – 84   (years 4-7)
+     1st Lieutenant:  84  – 132  (years 7-11)
+     Captain:         132 – 192  (years 11-16)
+     Major:           192 – 240  (years 16-20)  [JPME L3 begins late]
+   ============================================================ */
+const TIMELINE_START = 0;
+const TIMELINE_END   = 240;   // months
+const M = (yrs) => yrs * 12;
+
+const RANK_PHASES = {
+  cadet:    { start: M(0),   end: M(4)  },
+  lt:       { start: M(4),   end: M(7)  },
+  firstLt:  { start: M(7),   end: M(11) },
+  capt:     { start: M(11),  end: M(16) },
+  major:    { start: M(16),  end: M(20) }
+};
+
+/* COURSES — each scenario shifts start anchors by ~3-5 years */
+const SCENARIOS = {
+  current: {
+    title: 'Current State',
+    pill:  'Cadet → Major',
+    joint: [
+      { id:'ipc-j',  name:'Indirect Pathway Course',          start:M(0.5),  end:M(3.5),  duration:'~3 years' },
+      { id:'jpme2a', name:'JPME Level 2 Course A',            start:M(8.0),  end:M(8.25), duration:'~3 weeks', anchor:'1st Lt' },
+      { id:'jpme2b', name:'JPME Level 2 Course B',            start:M(16.5), end:M(16.75),duration:'~3 weeks', anchor:'Major' },
+      { id:'jcsc',   name:'Joint Command and Staff College',  start:M(19.0), end:M(19.8), duration:'~40 weeks', anchor:'Major / JPME L3' }
+    ],
+    service: [
+      { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
+      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(3.5),  end:M(4.5),  duration:'~1 year',   anchor:'Lt entry' },
+      { id:'plt',  name:'Platoon Commander Course',  start:M(4.7),  end:M(5.0),  duration:'~12 weeks', anchor:'Lieutenant' },
+      { id:'coy',  name:'Company Commander Course',  start:M(11.5), end:M(11.95),duration:'~22 weeks', anchor:'Captain' },
+      { id:'bn',   name:'Battalion Commander Course',start:M(17.0), end:M(17.45),duration:'~23 weeks', anchor:'Major' }
+    ],
+    gaps: [
+      { row:'service', start:M(5.0),  end:M(11.5), label:'~6 years operational duty' },
+      { row:'service', start:M(11.95),end:M(17.0), label:'~5 years operational duty' },
+      { row:'joint',   start:M(8.25), end:M(16.5), label:'~8 years between joint touchpoints' }
+    ],
+    warnings: [
+      { title:'Long gap between JPME Level 2 A and B',
+        meta:'~8 years between joint touchpoints risks knowledge decay before Course B.' },
+      { title:'Wide operational gap before Battalion Course',
+        meta:'~5 years between Company and Battalion Commander Courses; readiness depends on individual postings.' },
+      { title:'Joint Command &amp; Staff College compressed late in career',
+        meta:'40-week course collides with Major-rank operational responsibilities.' }
+    ],
+    benefits: [
+      { title:'Each course aligned to its own rank',
+        meta:'Officers gain command experience appropriate to their level before next course.' },
+      { title:'Hybrid delivery already minimises time away from units',
+        meta:'Per slide guidance: hybrid model preserves operational presence.' },
+      { title:'Preserves jointery in Joint Courses',
+        meta:'JPME courses delivered in joint environment — multi-service exposure built in.' }
+    ],
+    highlights: [
+      { html:'<strong>2 new Joint Courses</strong> close joint-education gaps at junior and mid-career levels.' },
+      { html:'Delivered in a <strong>joint environment</strong> to preserve jointery across services.' },
+      { html:'<strong>Hybrid delivery</strong> minimises time away from units.' }
+    ]
+  },
+
+  /* Shift each course back one rank (~ -3 to -5 years).
+     Course start/end values below are calibrated so any pair listed in
+     `collisions` is an actual time overlap on the timeline. */
+  back: {
+    title: 'Scenario — Shift Back One Rank',
+    pill:  'Earlier delivery (-1 rank)',
+    joint: [
+      { id:'ipc-j',  name:'Indirect Pathway Course',         start:M(0.5),  end:M(3.5),  duration:'~3 years' },
+      { id:'jpme2a', name:'JPME Level 2 Course A',           start:M(5.2),  end:M(5.45), duration:'~3 weeks', anchor:'Lieutenant' },
+      { id:'jpme2b', name:'JPME Level 2 Course B',           start:M(13.10),end:M(13.35),duration:'~3 weeks', anchor:'Captain'    },
+      { id:'jcsc',   name:'Joint Command and Staff College', start:M(15.0), end:M(15.8), duration:'~40 weeks', anchor:'Captain → Major' }
+    ],
+    service: [
+      { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
+      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(2.5),  end:M(3.5),  duration:'~1 year',   anchor:'Cadet (late)' },
+      { id:'plt',  name:'Platoon Commander Course',  start:M(2.7),  end:M(3.0),  duration:'~12 weeks', anchor:'Cadet (late)' },
+      { id:'coy',  name:'Company Commander Course',  start:M(7.5),  end:M(7.95), duration:'~22 weeks', anchor:'1st Lieutenant' },
+      { id:'bn',   name:'Battalion Commander Course',start:M(13.0), end:M(13.45),duration:'~23 weeks', anchor:'Captain' }
+    ],
+    gaps: [
+      { row:'service', start:M(3.5), end:M(7.5),  label:'~4 years before Company Course' },
+      { row:'service', start:M(7.95),end:M(13.0), label:'~5 years before Battalion Course' }
+    ],
+    /* All pairs below correspond to real time overlaps on the tracks. */
+    collisions: [
+      ['ipc-s','ipc-j'],      // Service Indirect 2.5-3.5 vs Joint Indirect 0.5-3.5 → overlap
+      ['plt','dpc'],          // Plt Cmd 2.7-3.0 inside Direct Pathway 0-3
+      ['plt','ipc-j'],        // Plt Cmd 2.7-3.0 inside Joint Indirect 0.5-3.5
+      ['plt','ipc-s'],        // Plt Cmd 2.7-3.0 inside Service Indirect 2.5-3.5
+      ['bn','jpme2b']         // Bn Cmd 13.0-13.45 contains JPME L2-B 13.10-13.35
+    ],
+    warnings: [
+      { title:'Platoon Commander Course collides with Direct Pathway Course',
+        meta:'Cadets cannot commission and command a platoon simultaneously — direct timeline conflict.' },
+      { title:'Joint &amp; Service Indirect Pathway Courses overlap',
+        meta:'Two ~1-3 year programmes running in parallel during cadetship is operationally infeasible.' },
+      { title:'Insufficient experience before Company Commander Course',
+        meta:'Officers reach Company Cmd at 1st Lt with ~3 years post-commissioning vs. ~7 today.' },
+      { title:'Battalion Commander Course at Captain rank',
+        meta:'Officers command battalions before reaching Major — prerequisite mismatch with appointment ranks.' },
+      { title:'JPME L2 Course B collides with Battalion Commander Course',
+        meta:'Two cohort-based courses competing for Captain-rank officers in the same window.' },
+      { title:'Joint C&amp;SC (40 weeks) lands during Battalion Cmd preparation',
+        meta:'Major operational courses stacked — significant time-away pressure on units.' }
+    ],
+    benefits: [
+      { title:'Earlier exposure to joint education',
+        meta:'JPME Level 2 reaches officers at Lt rather than 1st Lt — earlier joint mindset.' },
+      { title:'Compressed pathway to senior leadership',
+        meta:'Officers complete Battalion Cmd ~5 years earlier — faster command pipeline if collisions resolved.' },
+      { title:'Reduced knowledge decay between joint touchpoints',
+        meta:'Gap between JPME L2 A and B drops from ~8 years to ~6 years.' }
+    ],
+    highlights: [
+      { html:'<strong>Collisions appear at every rank</strong> — Cadet, Lt, and Captain phases all show overlapping courses.' },
+      { html:'<strong>Prerequisite risk</strong> — officers attend command courses before holding the corresponding appointment.' },
+      { html:'<strong>Acceleration potential</strong> only realised if course durations and entry standards are revised.' }
+    ]
+  },
+
+  /* Shift each course forward one rank (~ +3-4 years).
+     Calibrated so flagged collisions are real time overlaps. */
+  forward: {
+    title: 'Scenario — Shift Forward One Rank',
+    pill:  'Later delivery (+1 rank)',
+    joint: [
+      { id:'ipc-j',  name:'Indirect Pathway Course',         start:M(3.5),  end:M(6.5),  duration:'~3 years', anchor:'Lt → 1st Lt' },
+      { id:'jpme2a', name:'JPME Level 2 Course A',           start:M(16.60),end:M(16.85),duration:'~3 weeks', anchor:'Major (early)' },
+      { id:'jpme2b', name:'JPME Level 2 Course B',           start:M(19.55),end:M(19.70),duration:'~3 weeks', anchor:'late Major' }
+      /* JCSC pushed beyond visible timeline (post-Major) */
+    ],
+    service: [
+      { id:'dpc',  name:'Direct Pathway Course',     start:M(0),    end:M(3),    duration:'3 years',   anchor:'Cadet' },
+      { id:'ipc-s',name:'Indirect Pathway Course',   start:M(7.5),  end:M(8.5),  duration:'~1 year',   anchor:'1st Lt' },
+      { id:'plt',  name:'Platoon Commander Course',  start:M(8.7),  end:M(9.0),  duration:'~12 weeks', anchor:'1st Lieutenant' },
+      { id:'coy',  name:'Company Commander Course',  start:M(16.5), end:M(16.95),duration:'~22 weeks', anchor:'Major' },
+      { id:'bn',   name:'Battalion Commander Course',start:M(19.5), end:M(19.95),duration:'~23 weeks', anchor:'late Major' }
+    ],
+    gaps: [
+      { row:'service', start:M(3),    end:M(7.5),  label:'~4.5 years pre-IPC' },
+      { row:'service', start:M(9.0),  end:M(16.5), label:'~7.5 years to Company Course' },
+      { row:'service', start:M(16.95),end:M(19.5), label:'~2.5 years' }
+    ],
+    /* All pairs below correspond to real time overlaps on the tracks. */
+    collisions: [
+      ['coy','jpme2a'],       // Coy Cmd 16.5-16.95 contains JPME 2A 16.60-16.85
+      ['bn','jpme2b']         // Bn Cmd 19.5-19.95 contains JPME 2B 19.55-19.70
+    ],
+    warnings: [
+      { title:'Platoon Cmd Course delayed to 1st Lieutenant',
+        meta:'Officers lead platoons for ~3 years before formal training — risk to junior unit performance.' },
+      { title:'Company &amp; Battalion Commander courses compressed into Major rank',
+        meta:'Both senior command courses land in a 4-year window — minimal recovery time between them.' },
+      { title:'Joint Command &amp; Staff College pushed beyond Major',
+        meta:'JPME Level 3 falls outside the standard 20-year window — late-career strategic exposure.' },
+      { title:'Company Commander Course overlaps JPME Level 2 A',
+        meta:'Captain-rank officers face two competing course commitments simultaneously.' }
+    ],
+    benefits: [
+      { title:'Maximum operational time at junior ranks',
+        meta:'Lieutenants accumulate 3-4 years of platoon experience before formal courses.' },
+      { title:'Greater experience base entering each course',
+        meta:'Officers join Company Cmd Course as Majors — significant unit-level command background.' },
+      { title:'Reduced collision at junior ranks',
+        meta:'Cadet and Lt phases free of competing course commitments.' }
+    ],
+    highlights: [
+      { html:'<strong>Operational presence preserved</strong> — junior officers stay in units longer before courses.' },
+      { html:'<strong>Senior-rank congestion</strong> — Major rank carries two command courses + JPME L2-B.' },
+      { html:'<strong>JPME Level 3 deferred</strong> — Joint Command &amp; Staff College sits outside the displayed window.' }
+    ]
+  }
+};
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+const TRACK_PADDING_PCT = 0;
+function pct(monthValue) {
+  return ((monthValue - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100;
+}
+
+function renderTrack(trackEl, courses, gaps, collisionPairs, kind) {
+  trackEl.innerHTML = '';
+  // gaps first (background)
+  (gaps || []).filter(g => g.row === kind).forEach(g => {
+    const left = pct(g.start);
+    const width = pct(g.end) - pct(g.start);
+    const div = document.createElement('div');
+    div.className = 'gap-region';
+    div.style.left = left + '%';
+    div.style.width = width + '%';
+    if (g.label) {
+      const lbl = document.createElement('span');
+      lbl.className = 'gap-label';
+      lbl.textContent = g.label;
+      div.appendChild(lbl);
+    }
+    trackEl.appendChild(div);
+  });
+
+  // collision lookup
+  const collidingIds = new Set();
+  (collisionPairs || []).forEach(([a,b]) => { collidingIds.add(a); collidingIds.add(b); });
+
+  // courses
+  courses.forEach(c => {
+    const realWidth = pct(c.end) - pct(c.start);
+    const width = Math.max(5.0, realWidth);   // min visual width for readability
+    let left = pct(c.start);
+    if (left + width > 100) left = 100 - width;  // keep tile inside track bounds
+    const el = document.createElement('div');
+    el.className = 'course ' + kind + (collidingIds.has(c.id) ? ' collision' : '');
+    el.style.left = left + '%';
+    el.style.width = width + '%';
+    el.innerHTML = `
+      <span class="course-name" style="position:relative; z-index:1;">${c.name}</span>
+      <span class="course-tag">${c.duration}</span>
+    `;
+    el.dataset.id = c.id;
+    el.dataset.name = c.name;
+    el.dataset.duration = c.duration;
+    el.dataset.anchor = c.anchor || '';
+    el.dataset.collision = collidingIds.has(c.id) ? '1' : '0';
+    trackEl.appendChild(el);
+  });
+}
+
+function renderImplications(scenario) {
+  const wEl = document.getElementById('warningsList');
+  const bEl = document.getElementById('benefitsList');
+  wEl.innerHTML = '';
+  bEl.innerHTML = '';
+  scenario.warnings.forEach((w,i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="pip">!</span>
+      <span class="impl-text"><strong>${w.title}</strong><span class="meta">${w.meta}</span></span>`;
+    wEl.appendChild(li);
+  });
+  scenario.benefits.forEach((b,i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="pip">✓</span>
+      <span class="impl-text"><strong>${b.title}</strong><span class="meta">${b.meta}</span></span>`;
+    bEl.appendChild(li);
+  });
+}
+
+function renderHighlights(scenario) {
+  const els = ['hl1','hl2','hl3'].map(id => document.getElementById(id));
+  els.forEach((el,i) => {
+    el.innerHTML = scenario.highlights[i] ? scenario.highlights[i].html : '';
+  });
+}
+
+function applyScenario(key) {
+  const sc = SCENARIOS[key];
+  document.getElementById('timelineTitle').textContent = 'Course Timeline — ' + sc.title;
+  document.getElementById('timelinePill').textContent = sc.pill;
+  renderTrack(document.getElementById('jointTrack'),   sc.joint,   sc.gaps, sc.collisions, 'joint');
+  renderTrack(document.getElementById('serviceTrack'), sc.service, sc.gaps, sc.collisions, 'service');
+  renderImplications(sc);
+  renderHighlights(sc);
+
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.scenario === key);
+  });
+  attachTooltipHandlers();
+}
+
+/* ============================================================
+   TOOLTIP
+   ============================================================ */
+const tip = document.getElementById('tooltip');
+function attachTooltipHandlers() {
+  document.querySelectorAll('.course').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      const collision = el.dataset.collision === '1';
+      tip.innerHTML = `
+        <strong>${el.dataset.name}</strong>
+        <span class="t-meta">Duration: ${el.dataset.duration}</span>
+        ${el.dataset.anchor ? `<span class="t-meta">Phase: ${el.dataset.anchor}</span>` : ''}
+        ${collision ? `<span class="t-meta" style="color:#ff86a8;">⚠ Overlaps another course in this scenario</span>` : ''}
+      `;
+      tip.classList.add('show');
+    });
+    el.addEventListener('mousemove', e => {
+      const rect = tip.getBoundingClientRect();
+      let x = e.clientX + 14;
+      let y = e.clientY + 14;
+      if (x + rect.width > window.innerWidth - 12) x = e.clientX - rect.width - 14;
+      tip.style.left = x + 'px';
+      tip.style.top  = y + 'px';
+    });
+    el.addEventListener('mouseleave', () => tip.classList.remove('show'));
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => applyScenario(t.dataset.scenario));
+});
+applyScenario('current');
+</script>
+</body>
+</html>
