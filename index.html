@@ -1542,6 +1542,16 @@ function clearSelection() {
   document.getElementById('detailPanel').classList.add('empty');
 }
 
+/* Rank phase lookup based on month value (matches RANK_PHASES). */
+function rankFromMonths(m) {
+  if (m < RANK_PHASES.cadet.end)    return 'Cadet';
+  if (m < RANK_PHASES.lt.end)       return 'Lieutenant';
+  if (m < RANK_PHASES.firstLt.end)  return '1st Lieutenant';
+  if (m < RANK_PHASES.capt.end)     return 'Captain';
+  if (m < RANK_PHASES.major.end)    return 'Major';
+  return 'Lt Col';
+}
+
 /* ============================================================
    DRAG HANDLERS (custom view only)
    ------------------------------------------------------------
@@ -1579,13 +1589,17 @@ document.addEventListener('mousemove', e => {
   let newLeft = DRAG.startLeft + dxPct;
   newLeft = Math.max(0, Math.min(100 - DRAG.widthPct, newLeft));
   DRAG.el.style.left = newLeft + '%';
-  // translate left% back to months and update course start/end
+  // translate left% back to months and update course start/end + rank phase
   const newStart = (newLeft / 100) * (TIMELINE_END - TIMELINE_START) + TIMELINE_START;
   const dur = DRAG.origEnd - DRAG.origStart;
-  DRAG.course.start = newStart;
-  DRAG.course.end   = newStart + dur;
+  DRAG.course.start  = newStart;
+  DRAG.course.end    = newStart + dur;
+  DRAG.course.anchor = rankFromMonths(newStart);
   DRAG.el.dataset.startYear = (newStart / 12).toFixed(1);
   DRAG.el.dataset.endYear   = ((newStart + dur) / 12).toFixed(1);
+  DRAG.el.dataset.anchor    = DRAG.course.anchor;
+  // if this tile is currently selected, refresh the detail panel
+  if (DRAG.el.classList.contains('selected')) selectCourse(DRAG.el);
   // recompute and re-render gap labels (don't re-render tiles)
   const sc = SCENARIOS[CURRENT_SCENARIO];
   sc.gaps = computeAllGaps(sc);
