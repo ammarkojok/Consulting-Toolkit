@@ -18,6 +18,10 @@
 | Narrative/bullet argument | `bullets` | Use `level: 1` for support lines; `two_column: true` if > 8 items |
 | Deck closing | `end` | No content fields |
 
+**Check the library first**: if `assets/library.json` has a prototype matching
+the content shape (`type: library`), it beats any parametric pattern on design
+fidelity — it is a real designed slide, cloned and refilled (see SKILL.md).
+
 When nothing fits, compose with `cards` (the most flexible) or ask the user —
 do not invent freehand layouts.
 

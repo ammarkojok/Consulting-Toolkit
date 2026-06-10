@@ -83,9 +83,21 @@ class DeckBuilder:
             prs.part.drop_rel(sld.get(qn("r:id")))
             prs.slides._sldIdLst.remove(sld)
 
+        self.lib_items = []
+        position = 0
         for i, slide_spec in enumerate(self.spec["slides"], start=1):
             try:
-                self._build_slide(prs, slide_spec, i)
+                if slide_spec.get("type") == "library":
+                    if self.rtl:
+                        raise SpecError("library prototypes are LTR-only for now")
+                    self.lib_items.append({
+                        "position": position,
+                        "prototype": slide_spec["prototype"],
+                        "slots": slide_spec.get("slots") or {},
+                    })
+                else:
+                    self._build_slide(prs, slide_spec, i)
+                position += 1
             except SpecError as e:
                 self.errors.append(f"slide {i}: {e}")
             except KeyError as e:
@@ -96,6 +108,9 @@ class DeckBuilder:
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
         prs.save(out_path)
+        if self.lib_items:
+            from .library import apply_library_slides
+            apply_library_slides(out_path, self.lib_items)
         ppttc = emit_ppttc(out_path.parent, out_path.stem, self.charts_for_ppttc)
         if ppttc:
             print(f"think-cell handoff written: {ppttc}")

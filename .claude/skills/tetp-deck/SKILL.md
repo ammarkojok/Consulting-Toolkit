@@ -38,6 +38,35 @@ template fidelity; your job is content judgment.
 6. **Deliver** the `.pptx` (and `.ppttc` if think-cell charts were flagged),
    stating what was validated and any placeholder content the user must replace.
 
+## Library prototypes (clone-and-fill)
+
+For maximum design fidelity, prefer a library prototype over a parametric
+pattern when one matches the content. Prototypes are fully designed slides
+(taken from real TETP decks) in `assets/library.pptx`, indexed by name in
+`assets/library.json`. The builder clones the prototype verbatim — every
+layer, icon, and gradient survives — and replaces only the text slots you
+address by shape name:
+
+```bash
+python3 scripts/list_library_slots.py                    # available prototypes
+python3 scripts/list_library_slots.py delivery_tracker   # its slots
+```
+
+```yaml
+- type: library
+  prototype: delivery_tracker
+  slots:
+    "Title 1": "New action title"
+    "Rectangle: Rounded Corners 1126": "New row item"
+```
+
+Rules: fill or verify EVERY content slot — unfilled slots keep the prototype's
+original text, and the render check exists to catch exactly that. Slots are
+text-only for now (status-dot colors stay as in the prototype; pick a prototype
+whose dots match, or note it for manual touch-up). `library.pptx` contains
+Restricted Access material and is gitignored — sessions without it must fall
+back to parametric patterns.
+
 ## Hard rules
 
 - Decks are built only from `assets/TETP-canonical.pptx` via `build_deck.py`.
