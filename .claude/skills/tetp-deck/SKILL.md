@@ -68,6 +68,10 @@ gitignored; rebuild it in sessions that have the library files).
     "Rectangle: Rounded Corners 1126": "New row item"
 ```
 
+Slot values may be dicts — `{text, color: RRGGBB, size: pt, bold: true}` — to
+override the run style a skeleton slot inherits (some skeletons carry white
+text in empty runs; the render check exposes this as washed-out text).
+
 Rules: fill or verify EVERY content slot — unfilled slots keep the prototype's
 original text, and the render check exists to catch exactly that. Slots are
 text-only for now (status-dot colors stay as in the prototype; pick a prototype

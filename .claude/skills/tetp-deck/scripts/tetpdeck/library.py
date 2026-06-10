@@ -90,11 +90,34 @@ def list_slots(name: str) -> list[tuple[str, str]]:
     return out
 
 
+def _style_run(run, spec: dict) -> None:
+    """Apply optional color/size/bold overrides to a run's rPr."""
+    rPr = run.find(f"{{{NS['a']}}}rPr")
+    if rPr is None:
+        rPr = etree.Element(f"{{{NS['a']}}}rPr")
+        run.insert(0, rPr)
+    if spec.get("size"):
+        rPr.set("sz", str(int(float(spec["size"]) * 100)))
+    if spec.get("bold") is not None:
+        rPr.set("b", "1" if spec["bold"] else "0")
+    if spec.get("color"):
+        for fill in rPr.findall(f"{{{NS['a']}}}solidFill"):
+            rPr.remove(fill)
+        fill = etree.Element(f"{{{NS['a']}}}solidFill")
+        clr = etree.SubElement(fill, f"{{{NS['a']}}}srgbClr")
+        clr.set("val", spec["color"])
+        # schema order: a:ln precedes fills; fills precede latin/cs fonts
+        ln = rPr.find(f"{{{NS['a']}}}ln")
+        rPr.insert(list(rPr).index(ln) + 1 if ln is not None else 0, fill)
+
+
 def _replace_slot_text(root, shape_name: str, value) -> bool:
     """Replace the text of the named shape. A string collapses the shape to one
     paragraph (keeping its first run's formatting); a list maps to existing
     paragraphs in order (extra paragraphs are removed, extra values appended as
-    clones of the last paragraph)."""
+    clones of the last paragraph). Items may also be dicts:
+    {text, color: RRGGBB, size: pt, bold: true} to override the inherited run
+    style (useful when a skeleton's empty runs carry e.g. white text)."""
     for sp in root.iter(f"{{{NS['p']}}}sp"):
         nv = sp.find(f".//{{{NS['p']}}}cNvPr")
         if nv is None or nv.get("name") != shape_name:
@@ -103,7 +126,7 @@ def _replace_slot_text(root, shape_name: str, value) -> bool:
         if tx is None:
             return False
         paras = tx.findall(f"{{{NS['a']}}}p")
-        values = [value] if isinstance(value, str) else list(value)
+        values = [value] if isinstance(value, (str, dict)) else list(value)
         # Trim or grow paragraph list.
         while len(paras) > len(values):
             tx.remove(paras.pop())
@@ -113,18 +136,26 @@ def _replace_slot_text(root, shape_name: str, value) -> bool:
             tx.append(clone)
             paras.append(clone)
         for p, val in zip(paras, values):
+            spec = val if isinstance(val, dict) else {"text": val}
             runs = p.findall(f"{{{NS['a']}}}r")
             if not runs:
-                # paragraph had no run (empty) — make one
+                # paragraph had no run (empty) — make one, inheriting the
+                # paragraph's end-run properties if present
                 r = etree.SubElement(p, f"{{{NS['a']}}}r")
-                t = etree.SubElement(r, f"{{{NS['a']}}}t")
+                endPr = p.find(f"{{{NS['a']}}}endParaRPr")
+                if endPr is not None:
+                    rPr = etree.fromstring(etree.tostring(endPr))
+                    rPr.tag = f"{{{NS['a']}}}rPr"
+                    r.insert(0, rPr)
+                etree.SubElement(r, f"{{{NS['a']}}}t")
                 runs = [r]
             for extra in runs[1:]:
                 p.remove(extra)
             t = runs[0].find(f"{{{NS['a']}}}t")
             if t is None:
                 t = etree.SubElement(runs[0], f"{{{NS['a']}}}t")
-            t.text = val
+            t.text = spec["text"]
+            _style_run(runs[0], spec)
         return True
     return False
 
