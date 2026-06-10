@@ -30,6 +30,7 @@ PATTERN_LAYOUTS = {
     "chart": ("TETP EN Vertical", "vertical"),
     "table": ("TETP EN Horizontal", "horizontal"),
     "bullets": ("TETP EN Horizontal", "horizontal"),
+    "tracker": ("TETP EN Horizontal", "horizontal"),
 }
 CANVAS_LAYOUTS = {  # canvas override -> layout that provides it
     "vertical": "TETP EN Vertical",
@@ -255,6 +256,17 @@ class DeckBuilder:
             self.errors.append(f"slide {idx}: process supports 2-6 steps")
         if stype == "timeline" and not 2 <= len(s["milestones"]) <= 8:
             self.errors.append(f"slide {idx}: timeline supports 2-8 milestones")
+        if stype == "tracker":
+            n = len(s["rows"])
+            if not 2 <= n <= 7:
+                self.errors.append(f"slide {idx}: tracker supports 2-7 rows, got {n}")
+            bad = [r.get("status") for r in s["rows"]
+                   if r.get("status", "not_started") not in T.STATUS]
+            if bad:
+                self.errors.append(
+                    f"slide {idx}: unknown tracker status {bad[0]!r}; use "
+                    f"{', '.join(T.STATUS)}"
+                )
         if stype == "comparison":
             for side in ("left", "right"):
                 blts = s[side].get("bullets", [])

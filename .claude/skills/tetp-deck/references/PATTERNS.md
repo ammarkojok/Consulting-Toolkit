@@ -13,6 +13,7 @@
 | Events over time | `timeline` | 2–8 milestones, `done: true` fills the dot |
 | One chart + its meaning | `chart` | Add 2–4 `takeaways`; they render as a sidebar |
 | Structured records | `table` | ≤ 6 columns, ≤ 9 rows; quote "Yes"/"No" |
+| Workstream/status update | `tracker` | 2–7 rows: item + status dot + progress note; optional `category` rail; statuses: not_started, on_track, completed, risk, delayed |
 | Two labeled lists | `two_columns` | Native layout; heading + body per side |
 | Narrative/bullet argument | `bullets` | Use `level: 1` for support lines; `two_column: true` if > 8 items |
 | Deck closing | `end` | No content fields |

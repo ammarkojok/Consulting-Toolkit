@@ -59,7 +59,7 @@
       "type": "object",
       "required": ["type"],
       "properties": {
-        "type": { "enum": ["cover", "agenda", "end", "kpis", "cards", "comparison", "process", "timeline", "chart", "table", "two_columns", "bullets"] },
+        "type": { "enum": ["cover", "agenda", "end", "kpis", "cards", "comparison", "process", "timeline", "chart", "table", "two_columns", "bullets", "tracker"] },
         "title": { "type": "string" },
         "subtitle": { "type": "string" },
         "source": { "type": "string" },
@@ -120,7 +120,12 @@
         "columns": { "type": "array", "maxItems": 6 },
         "rows": { "type": "array", "maxItems": 9 },
         "bullets": { "type": "array", "items": { "$ref": "#/$defs/bullet" } },
-        "two_column": { "type": "boolean" }
+        "two_column": { "type": "boolean" },
+        "category": { "type": "string" },
+        "items_heading": { "type": "string" },
+        "notes_heading": { "type": "string" },
+        "legend": { "type": "boolean" },
+        "rows_tracker_note": { "$comment": "tracker uses 'rows': [{item, status, note}]" }
       }
     }
   }

@@ -124,6 +124,28 @@ slides:
       - [Logistics College, 9, 6, At risk, Q1 FY27]
       - [Medical Training Center, 6, 4, At risk, Q1 FY27]
 
+  - type: tracker
+    title: Delivery setup is on track to support pilot delivery from September
+    subtitle: Workstream status
+    source: "Source: TETP program office (illustrative)"
+    category: Course Delivery Setup
+    rows:
+      - item: Conduct student selection
+        status: on_track
+        note: Drafted student selection criteria with service institutes
+      - item: Secure approval to launch the pilot courses
+        status: on_track
+        note: Started preparing the Training Authorization Document
+      - item: Select instructors for the pilot courses
+        status: completed
+        note: Defined instructor selection criteria; two nominations requested per institute
+      - item: Set up LMS and digital course materials
+        status: not_started
+        note: Not started
+      - item: Prepare the physical delivery setup
+        status: not_started
+        note: Not started
+
   - type: two_columns
     title: Risks are manageable if two decisions land on time
     source: "Source: TETP risk register (illustrative)"

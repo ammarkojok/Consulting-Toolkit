@@ -7,7 +7,8 @@ from __future__ import annotations
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 
 from . import tokens as T
-from .draw import accent_bar, box, bullets_to_paras, text
+from .draw import (accent_bar, box, bullets_to_paras, cell, chip, gradient_box,
+                   header_bar, status_dot, status_legend, text)
 from .geometry import Rect, columns, est_text_height, grid, hsplit, vsplit
 from .charts import add_chart
 
@@ -21,10 +22,10 @@ def cards(slide, spec, cv: Rect, rtl: bool):
     area = cv if nrows == 2 else Rect(cv.x, cv.y, cv.w, min(cv.h, 3.9))
     cells = grid(area, len(items), max_cols=max_cols, gap=T.GAP, rtl=rtl)
     numbered = spec.get("numbered", True)
-    for i, (cell, item) in enumerate(zip(cells, items), start=1):
-        box(slide, cell, fill=T.WHITE)
-        accent_bar(slide, cell, item.get("accent", T.COPPER))
-        inner = cell.inset(T.PAD + 0.04)
+    for i, (cell_rect, item) in enumerate(zip(cells, items), start=1):
+        cell(slide, cell_rect)
+        accent_bar(slide, cell_rect, item.get("accent", T.COPPER))
+        inner = cell_rect.inset(T.PAD + 0.04)
         paras = []
         if numbered:
             paras.append({"text": f"{i:02d}", "size": T.SUBHEAD_SIZE, "bold": True,
@@ -42,15 +43,19 @@ def cards(slide, spec, cv: Rect, rtl: bool):
 
 def comparison(slide, spec, cv: Rect, rtl: bool):
     panels = [spec["left"], spec["right"]]
-    colors = [T.NAVY, T.COPPER]
-    for rect, panel, color in zip(columns(cv, 2, T.GAP, rtl), panels, colors):
-        head_h = 0.46
-        box(slide, Rect(rect.x, rect.y, rect.w, head_h), fill=color)
-        text(slide, Rect(rect.x + T.PAD, rect.y, rect.w - 2 * T.PAD, head_h),
-             [{"text": panel["heading"], "size": T.HEADING_SIZE, "bold": True,
-               "color": T.WHITE}], anchor=MSO_ANCHOR.MIDDLE, rtl=rtl)
-        body = Rect(rect.x, rect.y + head_h, rect.w, rect.h - head_h)
-        box(slide, body, fill=T.WHITE)
+    schemes = ["navy", "copper"]
+    # Size panels to content (plus headroom) rather than the full canvas.
+    need = max(
+        sum(est_text_height(b if isinstance(b, str) else b["text"],
+                            cv.w / 2 - 0.5, T.BODY_SIZE.pt) + 0.06
+            for b in p.get("bullets", []))
+        for p in panels
+    )
+    area = Rect(cv.x, cv.y, cv.w, min(cv.h, T.HEADER_BAR + need + 0.65))
+    for rect, panel, scheme in zip(columns(area, 2, T.GAP, rtl), panels, schemes):
+        bar = header_bar(slide, rect, panel["heading"], scheme, rtl)
+        body = Rect(rect.x, rect.y + bar.h + 0.04, rect.w, rect.h - bar.h - 0.04)
+        cell(slide, body)
         text(slide, body.inset(T.PAD),
              bullets_to_paras(panel.get("bullets", [])), rtl=rtl)
 
@@ -62,7 +67,7 @@ def kpis(slide, spec, cv: Rect, rtl: bool):
                 cv.w, band_h)
     col_w = (band.w - T.GAP * (len(items) - 1)) / len(items)
     for rect, item in zip(columns(band, len(items), T.GAP, rtl), items):
-        box(slide, rect, fill=T.WHITE)
+        cell(slide, rect)
         accent_bar(slide, rect, item.get("accent", T.NAVY))
         # Step the value size down when it would wrap the column.
         value = str(item["value"])
@@ -86,12 +91,11 @@ def process(slide, spec, cv: Rect, rtl: bool):
     chev_h = 0.55
     body_h = cv.h - chev_h - 0.12
     cols = columns(Rect(cv.x, cv.y, cv.w, cv.h), len(steps), T.GAP, rtl)
+    schemes = ["navy", "copper", "indigo"]
     for i, (rect, step) in enumerate(zip(cols, steps)):
         shape = MSO_SHAPE.PENTAGON if i == 0 and not rtl else MSO_SHAPE.CHEVRON
-        chev = box(slide, Rect(rect.x, rect.y, rect.w, chev_h),
-                   fill=T.SERIES[i % len(T.SERIES)], shape=shape)
-        tf = chev.text_frame
-        tf.word_wrap = True
+        gradient_box(slide, Rect(rect.x, rect.y, rect.w, chev_h),
+                     schemes[i % len(schemes)], shape=shape)
         text(slide, Rect(rect.x + 0.12, rect.y, rect.w - 0.24, chev_h),
              [{"text": step["heading"], "size": T.BODY_SIZE, "bold": True,
                "color": T.WHITE, "align": PP_ALIGN.CENTER}],
@@ -115,10 +119,9 @@ def timeline(slide, spec, cv: Rect, rtl: bool):
         box(slide, Rect(cx - dot / 2, line_y - dot / 2 + 0.0125, dot, dot),
             fill=T.NAVY if done else T.WHITE,
             line=None if done else T.NAVY, shape=MSO_SHAPE.OVAL)
-        text(slide, Rect(rect.x, line_y - 0.62, rect.w, 0.5),
-             [{"text": m["date"], "size": T.SMALL_SIZE, "bold": True,
-               "color": T.COPPER, "align": PP_ALIGN.CENTER}],
-             anchor=MSO_ANCHOR.BOTTOM, rtl=rtl)
+        chip_w = min(rect.w - 0.1, max(0.9, len(m["date"]) * 0.085))
+        chip(slide, Rect(cx - chip_w / 2, line_y - 0.52, chip_w, 0.26),
+             m["date"], fill=T.NAVY if m.get("done") else T.INDIGO, rtl=rtl)
         text(slide, Rect(rect.x + 0.05, line_y + 0.22, rect.w - 0.1, cv.h - (line_y - cv.y) - 0.3),
              [{"text": m["label"], "size": T.BODY_SIZE, "align": PP_ALIGN.CENTER}],
              rtl=rtl)
@@ -127,16 +130,14 @@ def timeline(slide, spec, cv: Rect, rtl: bool):
 def chart_takeaways(slide, spec, cv: Rect, rtl: bool):
     if spec.get("takeaways"):
         chart_rect, side = hsplit(cv, [0.66, 0.34], T.GAP, rtl)
-        box(slide, side, fill=T.WHITE)
-        accent_bar(slide, side, T.NAVY)
-        inner = side.inset(T.PAD)
-        paras = [{"text": spec.get("takeaways_heading", "Key takeaways"),
-                  "size": T.HEADING_SIZE, "bold": True, "color": T.NAVY}]
-        paras += bullets_to_paras(spec["takeaways"])
-        text(slide, Rect(inner.x, inner.y + 0.1, inner.w, inner.h - 0.1), paras, rtl=rtl)
+        bar = header_bar(slide, side, spec.get("takeaways_heading", "Key takeaways"),
+                         "navy", rtl)
+        body = Rect(side.x, side.y + bar.h + 0.04, side.w, side.h - bar.h - 0.04)
+        cell(slide, body)
+        text(slide, body.inset(T.PAD), bullets_to_paras(spec["takeaways"]), rtl=rtl)
     else:
         chart_rect = cv
-    pad = box(slide, chart_rect, fill=T.WHITE)
+    cell(slide, chart_rect)
     add_chart(slide, chart_rect.inset(0.18, 0.16), spec["chart"])
 
 
@@ -205,6 +206,64 @@ def bullets_pattern(slide, spec, cv: Rect, rtl: bool):
         text(slide, cv, paras, rtl=rtl)
 
 
+def tracker(slide, spec, cv: Rect, rtl: bool):
+    """Status tracker (reference style): category rail, item cells with status
+    dots, progress-note column, legend."""
+    legend_h = 0.3 if spec.get("legend", True) else 0.0
+    area = Rect(cv.x, cv.y, cv.w, cv.h - legend_h - (0.08 if legend_h else 0))
+    rail_w = 1.35 if spec.get("category") else 0.0
+    grid_x = area.x + rail_w + (T.GAP if rail_w else 0)
+    grid_w = area.w - rail_w - (T.GAP if rail_w else 0)
+    item_w = grid_w * 0.34
+    note_w = grid_w - item_w - T.GAP
+
+    if rtl:
+        item_x = area.x + area.w - rail_w - (T.GAP if rail_w else 0) - item_w
+        note_x = item_x - T.GAP - note_w
+        rail_x = area.x + area.w - rail_w
+    else:
+        item_x, note_x, rail_x = grid_x, grid_x + item_w + T.GAP, area.x
+
+    bar_y = area.y
+    header_bar(slide, Rect(item_x, bar_y, item_w, 0), spec.get("items_heading", "Output"), "navy", rtl)
+    header_bar(slide, Rect(note_x, bar_y, note_w, 0), spec.get("notes_heading", "Progress Update"), "navy", rtl)
+
+    rows_area = Rect(area.x, bar_y + T.HEADER_BAR + 0.06, area.w,
+                     area.h - T.HEADER_BAR - 0.06)
+    if rail_w:
+        box(slide, Rect(rail_x, rows_area.y, rail_w, rows_area.h), fill=T.PANEL_TAN)
+        text(slide, Rect(rail_x + 0.08, rows_area.y, rail_w - 0.16, rows_area.h),
+             [{"text": spec["category"], "size": T.BODY_SIZE, "bold": True,
+               "color": T.COPPER_DEEP, "align": PP_ALIGN.CENTER}],
+             anchor=MSO_ANCHOR.MIDDLE, rtl=rtl)
+
+    items = spec["rows"]
+    row_h = (rows_area.h - T.GAP * (len(items) - 1)) / len(items)
+    for i, it in enumerate(items):
+        y = rows_area.y + i * (row_h + T.GAP)
+        icell = Rect(item_x, y, item_w, row_h)
+        cell(slide, icell, fill="F7F7FA", border=None)
+        dot_x = icell.x + (0.2 if rtl else icell.w - 0.2)
+        text(slide, Rect(icell.x + (0.35 if rtl else 0.1), icell.y,
+                         icell.w - 0.45, row_h),
+             [{"text": it["item"], "size": T.BODY_SIZE, "bold": True,
+               "color": T.NAVY}], anchor=MSO_ANCHOR.MIDDLE, rtl=rtl)
+        status_dot(slide, dot_x, y + row_h / 2, it.get("status", "not_started"))
+        ncell = Rect(note_x, y, note_w, row_h)
+        cell(slide, ncell)
+        if it.get("note"):
+            text(slide, ncell.inset(0.1, 0.06),
+                 [{"text": "–  " + it["note"], "size": T.BODY_SIZE}],
+                 anchor=MSO_ANCHOR.MIDDLE, rtl=rtl)
+
+    if legend_h:
+        order = ["not_started", "on_track", "completed", "risk", "delayed"]
+        used = [s for s in order if any(r.get("status") == s for r in items)] or order[:3]
+        status_legend(slide, Rect(grid_x, area.y + area.h + 0.08,
+                                  min(grid_w, 1.35 * len(used)), legend_h),
+                      used, rtl)
+
+
 PATTERNS = {
     "cards": cards,
     "comparison": comparison,
@@ -214,4 +273,5 @@ PATTERNS = {
     "chart": chart_takeaways,
     "table": table,
     "bullets": bullets_pattern,
+    "tracker": tracker,
 }
