@@ -54,20 +54,31 @@ def lib_index() -> dict:
     return json.loads(LIB_INDEX.read_text(encoding="utf-8")) if LIB_INDEX.exists() else {}
 
 
-def prototype_slide_num(name: str) -> int:
+def resolve_prototype(name: str) -> tuple[Path, int]:
+    """Return (pptx_path, slide_number). Index entries are either a bare slide
+    number (legacy; lives in library.pptx) or {"file": ..., "slide": ..., "use": ...}."""
     idx = lib_index()
     if name not in idx:
         raise KeyError(
             f"prototype {name!r} not in library index; available: {sorted(idx)}"
         )
-    return idx[name]
+    entry = idx[name]
+    if isinstance(entry, int):
+        return LIB_PPTX, entry
+    path = SKILL / "assets" / entry["file"]
+    if not path.exists():
+        raise FileNotFoundError(
+            f"prototype {name!r} needs {entry['file']}, which is not present in "
+            f"this checkout (restricted libraries are not committed)"
+        )
+    return path, entry["slide"]
 
 
 def list_slots(name: str) -> list[tuple[str, str]]:
     """Return (shape_name, current_text) for every text-bearing shape."""
-    num = prototype_slide_num(name)
+    lib_path, num = resolve_prototype(name)
     out = []
-    with zipfile.ZipFile(LIB_PPTX) as z:
+    with zipfile.ZipFile(lib_path) as z:
         root = etree.fromstring(z.read(f"ppt/slides/slide{num}.xml"))
     for sp in root.iter(f"{{{NS['p']}}}sp"):
         nv = sp.find(f".//{{{NS['p']}}}cNvPr")
@@ -127,11 +138,17 @@ def apply_library_slides(deck_path: Path, items: list[dict]) -> None:
         return
     work = Path(tempfile.mkdtemp(prefix="tetp-lib-"))
     deck_dir = work / "deck"
-    lib_dir = work / "lib"
     with zipfile.ZipFile(deck_path) as z:
         z.extractall(deck_dir)
-    with zipfile.ZipFile(LIB_PPTX) as z:
-        z.extractall(lib_dir)
+    lib_dirs: dict[Path, Path] = {}
+
+    def lib_dir_for(lib_path: Path) -> Path:
+        if lib_path not in lib_dirs:
+            d = work / f"lib{len(lib_dirs)}"
+            with zipfile.ZipFile(lib_path) as z:
+                z.extractall(d)
+            lib_dirs[lib_path] = d
+        return lib_dirs[lib_path]
 
     # Deck bookkeeping ---------------------------------------------------------
     ct = etree.parse(str(deck_dir / "[Content_Types].xml"))
@@ -152,13 +169,14 @@ def apply_library_slides(deck_path: Path, items: list[dict]) -> None:
         if m:
             deck_layouts[m.group(1)] = f.name
 
-    copied_assets: dict[str, str] = {}
+    copied_assets: dict[tuple, str] = {}
 
-    def copy_asset(lib_part: str) -> str:
-        if lib_part in copied_assets:
-            return copied_assets[lib_part]
+    def copy_asset(lib_part: str, lib_dir: Path, tag: str) -> str:
+        key = (str(lib_dir), lib_part)
+        if key in copied_assets:
+            return copied_assets[key]
         kind, name = lib_part.split("/")[1], lib_part.split("/")[-1]
-        dst_rel = f"ppt/{kind}/lib_{name}"
+        dst_rel = f"ppt/{kind}/lib{tag}_{name}"
         dst = deck_dir / dst_rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(lib_dir / lib_part, dst)
@@ -177,11 +195,13 @@ def apply_library_slides(deck_path: Path, items: list[dict]) -> None:
             el.set("PartName", f"/{dst_rel}")
             el.set("ContentType",
                    "application/vnd.openxmlformats-officedocument.presentationml.tags+xml")
-        copied_assets[lib_part] = dst_rel
+        copied_assets[key] = dst_rel
         return dst_rel
 
     for item in items:
-        num = prototype_slide_num(item["prototype"])
+        lib_path, num = resolve_prototype(item["prototype"])
+        lib_dir = lib_dir_for(lib_path)
+        lib_tag = str(list(lib_dirs).index(lib_path))
         slide_xml = lib_dir / "ppt" / "slides" / f"slide{num}.xml"
         slide_rels = lib_dir / "ppt" / "slides" / "_rels" / f"slide{num}.xml.rels"
 
@@ -218,7 +238,8 @@ def apply_library_slides(deck_path: Path, items: list[dict]) -> None:
             elif target.startswith("../"):
                 lib_part = posixpath.normpath(posixpath.join("ppt/slides", target))
                 rel.set("Target",
-                        posixpath.relpath(copy_asset(lib_part), "ppt/slides"))
+                        posixpath.relpath(copy_asset(lib_part, lib_dir, lib_tag),
+                                          "ppt/slides"))
         rels_out = deck_dir / "ppt" / "slides" / "_rels" / f"slide{new_num}.xml.rels"
         rels_out.parent.mkdir(parents=True, exist_ok=True)
         rels.write(str(rels_out), xml_declaration=True, encoding="UTF-8",
