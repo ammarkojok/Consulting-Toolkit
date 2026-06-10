@@ -82,10 +82,11 @@ def list_slots(name: str) -> list[tuple[str, str]]:
         root = etree.fromstring(z.read(f"ppt/slides/slide{num}.xml"))
     for sp in root.iter(f"{{{NS['p']}}}sp"):
         nv = sp.find(f".//{{{NS['p']}}}cNvPr")
+        if sp.find(f".//{{{NS['p']}}}txBody") is None:
+            continue
         texts = [t.text or "" for t in sp.iter(f"{{{NS['a']}}}t")]
         joined = " | ".join(t for t in texts if t.strip())
-        if joined:
-            out.append((nv.get("name"), joined))
+        out.append((nv.get("name"), joined or "[empty]"))
     return out
 
 

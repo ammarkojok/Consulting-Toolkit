@@ -1,7 +1,87 @@
 {
-  "pathway_timeline": {"file": "library.pptx", "slide": 1, "use": "Two-tier rank/pathway timeline with duration chips"},
-  "course_scope": {"file": "library.pptx", "slide": 2, "use": "Dashed-scope grouping of course options"},
-  "working_group": {"file": "library.pptx", "slide": 3, "use": "Working-group charter matrix: purpose, members, output"},
-  "course_progression": {"file": "library.pptx", "slide": 4, "use": "Numbered objective rows progressing across two courses"},
-  "delivery_tracker": {"file": "library.pptx", "slide": 5, "use": "Workstream status rows with dots and progress notes"}
+  "pathway_timeline": {
+    "file": "library.pptx",
+    "slide": 1,
+    "use": "Two-tier rank/pathway timeline with duration chips"
+  },
+  "course_scope": {
+    "file": "library.pptx",
+    "slide": 2,
+    "use": "Dashed-scope grouping of course options"
+  },
+  "working_group": {
+    "file": "library.pptx",
+    "slide": 3,
+    "use": "Working-group charter matrix: purpose, members, output"
+  },
+  "course_progression": {
+    "file": "library.pptx",
+    "slide": 4,
+    "use": "Numbered objective rows progressing across two courses"
+  },
+  "delivery_tracker": {
+    "file": "library.pptx",
+    "slide": 5,
+    "use": "Workstream status rows with dots and progress notes"
+  },
+  "icon_journey_cards": {
+    "file": "library-nice.pptx",
+    "slide": 1,
+    "use": "Five-column icon-card journey over faded photo; dashed emphasis frame; arrows into summary boxes"
+  },
+  "icon_rows_panel": {
+    "file": "library-nice.pptx",
+    "slide": 2,
+    "use": "Large framed panel with four icon rows, each with two dotted sub-fields"
+  },
+  "swimlane_program_map": {
+    "file": "library-nice.pptx",
+    "slide": 3,
+    "use": "Dense swimlane map: chevron header bands, hatched current-state row, emphasis frame"
+  },
+  "matrix_sidebar_en_ar": {
+    "file": "library-nice.pptx",
+    "slide": 4,
+    "use": "2x3 icon pill grid with row labels, EN/AR side panel, takeaway band"
+  },
+  "bilingual_flag_table": {
+    "file": "library-nice.pptx",
+    "slide": 5,
+    "use": "Comparison table with flag column headers and side panels"
+  },
+  "phase_node_grid": {
+    "file": "library-nice.pptx",
+    "slide": 6,
+    "use": "Dotted-connector rows of navy photo cards and outlined cards with takeaway band"
+  },
+  "maturity_staircase": {
+    "file": "library-nice.pptx",
+    "slide": 7,
+    "use": "Ascending staircase maturity chart with callout and hatched baseline"
+  },
+  "chevron_value_table": {
+    "file": "library-nice.pptx",
+    "slide": 8,
+    "use": "Chevron header flow into merged tan value-cell matrix"
+  },
+  "dual_checklist": {
+    "file": "library-nice.pptx",
+    "slide": 9,
+    "use": "Two checklist columns under textured navy headers, alert banner, takeaway footer"
+  },
+  "strategy_carousel": {
+    "file": "library-nice.pptx",
+    "slide": 10,
+    "use": "Navy document panel left, bracketed bars center, icon list right, footer note"
+  },
+  "tan_ribbon_columns": {
+    "file": "library-nice.pptx",
+    "slide": 11,
+    "use": "Navy textured banner over five tan ribbon columns with icons"
+  },
+  "rank_pathway_panel": {
+    "file": "library-nice.pptx",
+    "slide": 12,
+    "use": "Rank banner with photo tiles, icon grids, highlight cell, footer takeaways"
+  }
 }
