@@ -15,19 +15,28 @@ from .charts import add_chart
 def cards(slide, spec, cv: Rect, rtl: bool):
     items = spec["cards"]
     max_cols = len(items) if len(items) <= 4 else 3
-    cells = grid(cv, len(items), max_cols=max_cols, gap=T.GAP, rtl=rtl)
-    for cell, item in zip(cells, items):
+    nrows = 1 if len(items) <= max_cols else 2
+    # A single sparse row reads unfinished at full canvas height; cap and
+    # let whitespace sit below, like a hand-built consulting slide.
+    area = cv if nrows == 2 else Rect(cv.x, cv.y, cv.w, min(cv.h, 3.9))
+    cells = grid(area, len(items), max_cols=max_cols, gap=T.GAP, rtl=rtl)
+    numbered = spec.get("numbered", True)
+    for i, (cell, item) in enumerate(zip(cells, items), start=1):
         box(slide, cell, fill=T.WHITE)
         accent_bar(slide, cell, item.get("accent", T.COPPER))
-        inner = cell.inset(T.PAD)
-        paras = [{"text": item["heading"], "size": T.HEADING_SIZE, "bold": True,
-                  "color": T.NAVY}]
+        inner = cell.inset(T.PAD + 0.04)
+        paras = []
+        if numbered:
+            paras.append({"text": f"{i:02d}", "size": T.SUBHEAD_SIZE, "bold": True,
+                          "color": T.COPPER})
+        paras.append({"text": item["heading"], "size": T.HEADING_SIZE, "bold": True,
+                      "color": T.NAVY, "space_before": 2 if numbered else 0})
         if item.get("body"):
             body = item["body"] if isinstance(item["body"], list) else [item["body"]]
             for b in body:
                 paras.append({"text": b if isinstance(b, str) else b["text"],
-                              "size": T.BODY_SIZE, "space_before": 5})
-        text(slide, Rect(inner.x, inner.y + 0.10, inner.w, inner.h - 0.10),
+                              "size": T.BODY_SIZE, "space_before": 6})
+        text(slide, Rect(inner.x, inner.y + 0.08, inner.w, inner.h - 0.08),
              paras, rtl=rtl)
 
 
@@ -48,7 +57,7 @@ def comparison(slide, spec, cv: Rect, rtl: bool):
 
 def kpis(slide, spec, cv: Rect, rtl: bool):
     items = spec["kpis"]
-    band_h = min(1.9, cv.h)
+    band_h = min(2.45, cv.h)
     band = Rect(cv.x, cv.y + (cv.h - band_h) / 2 if spec.get("centered", True) else cv.y,
                 cv.w, band_h)
     col_w = (band.w - T.GAP * (len(items) - 1)) / len(items)
