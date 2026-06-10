@@ -42,13 +42,12 @@ template fidelity; your job is content judgment.
 
 For maximum design fidelity, prefer a library prototype over a parametric
 pattern when one matches the content. Prototypes are fully designed slides
-indexed in `assets/library.json` — each entry has a `use` description; read
-that file to choose. Two sources: `library-tetp.pptx` (committed; Kearney
-slide-system designs rebuilt in TETP colors, regenerate with
-`scripts/build_library.py`) and `library.pptx` (gitignored; slides from real
-TETP decks — entries referencing it fail cleanly when absent). The builder
-clones the prototype verbatim — every layer, icon, and gradient survives —
-and replaces only the text slots you address by shape name:
+from real TETP decks, indexed in `assets/library.json` — each entry has a
+`use` description; read that file to choose. The library grows only from
+TETP-designed slides supplied by the user; do not invent prototypes or import
+outside designs. The builder clones the prototype verbatim — every layer,
+icon, and gradient survives — and replaces only the text slots you address by
+shape name:
 
 ```bash
 python3 scripts/list_library_slots.py                    # available prototypes

@@ -1,52 +1,7 @@
 {
-  "exec_summary": {
-    "file": "library-tetp.pptx",
-    "slide": 1,
-    "use": "Opening executive summary: one calm box of bold-lead bullets"
-  },
-  "scqa_summary": {
-    "file": "library-tetp.pptx",
-    "slide": 2,
-    "use": "Situation / Complication / Answer three-panel summary"
-  },
-  "divider": {
-    "file": "library-tetp.pptx",
-    "slide": 3,
-    "use": "Section divider: oversized number + display title"
-  },
-  "kpi_hero": {
-    "file": "library-tetp.pptx",
-    "slide": 4,
-    "use": "One hero number with two supporting KPIs and interpretation"
-  },
-  "next_steps": {
-    "file": "library-tetp.pptx",
-    "slide": 5,
-    "use": "Numbered action rows with owner and due-date meta"
-  },
-  "pathway_timeline": {
-    "file": "library.pptx",
-    "slide": 1,
-    "use": "Two-tier rank/pathway timeline with duration chips"
-  },
-  "course_scope": {
-    "file": "library.pptx",
-    "slide": 2,
-    "use": "Dashed-scope grouping of course options"
-  },
-  "working_group": {
-    "file": "library.pptx",
-    "slide": 3,
-    "use": "Working-group charter matrix: purpose, members, output"
-  },
-  "course_progression": {
-    "file": "library.pptx",
-    "slide": 4,
-    "use": "Numbered objective rows progressing across two courses"
-  },
-  "delivery_tracker": {
-    "file": "library.pptx",
-    "slide": 5,
-    "use": "Workstream status rows with dots and progress notes"
-  }
+  "pathway_timeline": {"file": "library.pptx", "slide": 1, "use": "Two-tier rank/pathway timeline with duration chips"},
+  "course_scope": {"file": "library.pptx", "slide": 2, "use": "Dashed-scope grouping of course options"},
+  "working_group": {"file": "library.pptx", "slide": 3, "use": "Working-group charter matrix: purpose, members, output"},
+  "course_progression": {"file": "library.pptx", "slide": 4, "use": "Numbered objective rows progressing across two courses"},
+  "delivery_tracker": {"file": "library.pptx", "slide": 5, "use": "Workstream status rows with dots and progress notes"}
 }

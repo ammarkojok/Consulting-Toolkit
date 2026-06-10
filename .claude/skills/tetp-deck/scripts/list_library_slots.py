@@ -18,8 +18,10 @@ if len(sys.argv) < 2:
     if not idx:
         print("library is empty — add prototypes to assets/library.pptx "
               "and name them in assets/library.json")
-    for name, num in sorted(idx.items(), key=lambda kv: kv[1]):
-        print(f"{name}  (library slide {num})")
+    for name, entry in sorted(idx.items()):
+        if isinstance(entry, int):
+            entry = {"file": "library.pptx", "slide": entry, "use": ""}
+        print(f"{name}  ({entry['file']} slide {entry['slide']})  {entry.get('use', '')}")
 else:
     for shape, text in list_slots(sys.argv[1]):
         print(f"{shape!r}: {text[:90]}")
