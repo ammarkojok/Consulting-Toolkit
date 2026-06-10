@@ -1,0 +1,158 @@
+# Example TETP Deck Spec — exercises every v1 slide type.
+# Content is illustrative placeholder material, labeled as such.
+deck:
+  title: Digital Learning Transformation — Phase 2 Readout
+  language: en
+
+slides:
+  - type: cover
+    title: "Digital learning transformation: Phase 2 readout"
+    subtitle: Steering committee briefing (illustrative example data)
+    report_type: Status report
+    date: June 2026
+
+  - type: agenda
+    heading: Where we stand after six months
+
+  - type: kpis
+    title: "Phase 2 is on track: adoption and satisfaction exceed targets"
+    subtitle: Program scorecard
+    source: "Source: TETP program office (illustrative)"
+    kpis:
+      - value: "82%"
+        label: Platform adoption across academies
+        delta: +14 pts vs target
+      - value: "4.4/5"
+        label: Learner satisfaction
+        delta: +0.6 vs baseline
+      - value: "37"
+        label: Courses migrated to new platform
+        delta: of 45 planned
+      - value: "SAR 2.1M"
+        label: Run-rate savings identified
+        delta: +12% vs plan
+
+  - type: cards
+    title: Three forces will shape the next phase of the program
+    source: "Source: TETP analysis (illustrative)"
+    cards:
+      - heading: AI-assisted instruction
+        body: Adaptive tutoring pilots cut time-to-competency by 23% in two academies; scaling requires instructor enablement.
+      - heading: Capacity constraints
+        body: Instructor availability is the binding constraint for FY27 expansion; certification pipeline covers only 60% of demand.
+      - heading: Funding window
+        body: The transformation budget envelope closes in Q2 FY27; uncommitted scope must be locked by December.
+
+  - type: comparison
+    title: Centralized delivery outperforms the federated model on every cost metric
+    subtitle: Operating model assessment
+    source: "Source: TETP benchmarking (illustrative)"
+    left:
+      heading: Centralized academy model
+      bullets:
+        - One shared platform team; 11 FTE total
+        - Cost per learner-hour of SAR 38
+        - Single content pipeline, 4-week turnaround
+        - Consistent quality assurance across academies
+    right:
+      heading: Federated model (status quo)
+      bullets:
+        - Five parallel platform teams; 19 FTE total
+        - Cost per learner-hour of SAR 61
+        - Duplicate content builds across academies
+        - Quality varies; no shared standards
+
+  - type: process
+    title: A four-step path takes the program from pilot to full scale
+    subtitle: Scale-up approach
+    source: "Source: TETP program office (illustrative)"
+    steps:
+      - heading: Consolidate
+        body: Merge platform teams and standardize toolchain by Q3.
+      - heading: Certify
+        body: Run instructor certification waves; 120 instructors by Q4.
+      - heading: Migrate
+        body: Move remaining 8 courses; retire legacy systems.
+      - heading: Scale
+        body: Onboard three remaining academies in FY27.
+
+  - type: timeline
+    title: Key decisions cluster in the next two quarters
+    subtitle: Program milestones
+    source: "Source: TETP program office (illustrative)"
+    milestones:
+      - date: Jul 2026
+        label: Operating model decision
+        done: true
+      - date: Sep 2026
+        label: Instructor wave 2 complete
+      - date: Dec 2026
+        label: Scope lock for FY27
+      - date: Mar 2027
+        label: Legacy platform retired
+      - date: Jun 2027
+        label: All academies onboarded
+
+  - type: chart
+    title: Adoption growth is driven by the three largest academies
+    subtitle: Monthly active learners by academy cluster
+    source: "Source: Platform analytics, May 2026 (illustrative)"
+    chart:
+      kind: stacked_bar
+      categories: [Jan, Feb, Mar, Apr, May]
+      series:
+        - name: Large academies
+          values: [4200, 5100, 6300, 7600, 8900]
+        - name: Mid-size academies
+          values: [2100, 2300, 2700, 3000, 3400]
+        - name: Specialist units
+          values: [800, 900, 1000, 1200, 1300]
+    takeaways:
+      - Large academies added 4,700 active learners in five months
+      - Specialist units lag; targeted onboarding starts in July
+      - Growth rate supports the FY27 scale-up case
+
+  - type: table
+    title: Course migration is ahead of plan in three of five academies
+    subtitle: Migration status by academy
+    source: "Source: TETP program office, June 2026 (illustrative)"
+    columns: [Academy, Courses planned, Migrated, "On plan?", Go-live]
+    rows:
+      - [Naval Academy, 12, 11, Yes, Q3 FY26]
+      - [Technical Institute, 10, 9, Yes, Q3 FY26]
+      - [Aviation School, 8, 7, Yes, Q4 FY26]
+      - [Logistics College, 9, 6, At risk, Q1 FY27]
+      - [Medical Training Center, 6, 4, At risk, Q1 FY27]
+
+  - type: two_columns
+    title: Risks are manageable if two decisions land on time
+    source: "Source: TETP risk register (illustrative)"
+    left:
+      heading: Top risks
+      body:
+        - Instructor pipeline shortfall in FY27
+        - Legacy contract auto-renews in January
+        - Content quality drift across academies
+    right:
+      heading: Mitigations in motion
+      body:
+        - Certification wave 2 doubled in size
+        - Termination notice drafted for legal review
+        - Shared QA rubric pilots this quarter
+
+  - type: bullets
+    title: "Ask of the committee: three approvals to keep Phase 2 on schedule"
+    subtitle: Next steps
+    source: "Source: TETP program office (illustrative)"
+    bullets:
+      - Approve the centralized operating model effective Q3 FY26
+      - text: Consolidates five platform teams into one; saves SAR 4.2M over two years
+        level: 1
+      - Commit FY27 scope by December to stay inside the funding window
+      - text: Unfunded scope defaults to FY28 with materially higher unit costs
+        level: 1
+      - Endorse instructor certification wave 2 starting September
+      - text: 120 instructors certified by year-end closes the capacity gap
+        level: 1
+
+  - type: end

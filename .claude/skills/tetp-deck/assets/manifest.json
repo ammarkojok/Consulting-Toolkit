@@ -1,0 +1,786 @@
+{
+  "template": "TETP-canonical.pptx",
+  "slide_size_in": [
+    13.33,
+    7.5
+  ],
+  "theme": {
+    "fonts": {
+      "major": "Arial",
+      "minor": "Arial"
+    },
+    "colors": {
+      "ink": "1E1E1E",
+      "white": "FFFFFF",
+      "navy": "3A3B68",
+      "copper": "C4996C",
+      "gray": "D2D2D2",
+      "tan": "C5A783",
+      "mauve": "B6AFB0",
+      "indigo": "66689B",
+      "deep": "505282"
+    }
+  },
+  "masters": [
+    {
+      "language": "en",
+      "layouts": [
+        {
+          "name": "TETP EN Cover",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "CENTER_TITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 0.42,
+                "w": 5.83,
+                "h": 1.25
+              },
+              "char_budget": 129,
+              "prompt": "What are you here \u000bto say? Set the tone."
+            },
+            {
+              "idx": 1,
+              "type": "SUBTITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 2.91,
+                "w": 5.83,
+                "h": 1.67
+              },
+              "char_budget": 560,
+              "prompt": "Add supporting detail"
+            },
+            {
+              "idx": 15,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 5.21,
+                "w": 4.34,
+                "h": 0.21
+              },
+              "char_budget": 52,
+              "prompt": "Date here"
+            },
+            {
+              "idx": 12,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.97,
+                "w": 4.34,
+                "h": 0.21
+              },
+              "char_budget": 52,
+              "prompt": "Report type here"
+            }
+          ]
+        },
+        {
+          "name": "TETP EN End Page",
+          "placeholders": []
+        },
+        {
+          "name": "TETP EN Vertical",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 0.42,
+                "w": 2.5,
+                "h": 2.42
+              },
+              "char_budget": 126,
+              "prompt": "Key message. \u000bIf the audience reads just this, it will be enough. Make every wor"
+            },
+            {
+              "idx": 20,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.17,
+                "w": 2.5,
+                "h": 0.81
+              },
+              "char_budget": 120,
+              "prompt": "Sub-title"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.98,
+                "w": 2.5,
+                "h": 1.0
+              },
+              "char_budget": 150,
+              "prompt": "Source: TETP"
+            }
+          ]
+        },
+        {
+          "name": "TETP EN Horizontal",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 0.43,
+                "y": 0.43,
+                "w": 10.57,
+                "h": 0.61
+              },
+              "char_budget": 78,
+              "prompt": "Key message. If the audience reads just this, it will be enough. Make every word"
+            },
+            {
+              "idx": 10,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.43,
+                "y": 1.51,
+                "w": 12.49,
+                "h": 5.57
+              },
+              "char_budget": 4228,
+              "prompt": "Click to edit Master text styles\nSecond level\nThird level\nFourth level\nFifth lev"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.43,
+                "y": 7.1,
+                "w": 5.82,
+                "h": 0.26
+              },
+              "char_budget": 70,
+              "prompt": "Source: TETP"
+            },
+            {
+              "idx": 23,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.43,
+                "y": 1.15,
+                "w": 12.49,
+                "h": 0.24
+              },
+              "char_budget": 151,
+              "prompt": "Sub-Header"
+            }
+          ]
+        },
+        {
+          "name": "TETP EN Agenda",
+          "placeholders": [
+            {
+              "idx": 10,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.41,
+                "y": 0.83,
+                "w": 12.51,
+                "h": 5.84
+              },
+              "char_budget": 4379,
+              "prompt": "Chapter heading"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.43,
+                "y": 7.1,
+                "w": 5.82,
+                "h": 0.26
+              },
+              "char_budget": 70,
+              "prompt": "Source: TETP"
+            }
+          ]
+        },
+        {
+          "name": "EN Split",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 0.42,
+                "w": 5.83,
+                "h": 0.91
+              },
+              "char_budget": 86,
+              "prompt": "Key message. If the audience reads just this, it will be enough. Make every word"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.43,
+                "y": 7.1,
+                "w": 5.82,
+                "h": 0.26
+              },
+              "char_budget": 70,
+              "prompt": "Source: TETP"
+            }
+          ]
+        },
+        {
+          "name": "EN Two Columns",
+          "placeholders": [
+            {
+              "idx": 16,
+              "type": "BODY",
+              "rect_in": {
+                "x": 3.75,
+                "y": 0.42,
+                "w": 4.17,
+                "h": 0.41
+              },
+              "char_budget": 100,
+              "prompt": "Heading: Make your point.\nSub-heading: Add supporting detail."
+            },
+            {
+              "idx": 17,
+              "type": "BODY",
+              "rect_in": {
+                "x": 8.33,
+                "y": 0.42,
+                "w": 4.58,
+                "h": 0.41
+              },
+              "char_budget": 110,
+              "prompt": "Heading: Make your point.\nSub-heading: Add supporting detail."
+            },
+            {
+              "idx": 19,
+              "type": "OBJECT",
+              "rect_in": {
+                "x": 3.75,
+                "y": 1.25,
+                "w": 4.17,
+                "h": 5.41
+              },
+              "char_budget": 1350,
+              "prompt": "This is where you make your case with relevant evidence and information. Keep se"
+            },
+            {
+              "idx": 20,
+              "type": "OBJECT",
+              "rect_in": {
+                "x": 8.33,
+                "y": 1.25,
+                "w": 4.58,
+                "h": 5.41
+              },
+              "char_budget": 1485,
+              "prompt": "This is where you make your case with relevant evidence and information. Keep se"
+            },
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 0.42,
+                "w": 2.5,
+                "h": 2.42
+              },
+              "char_budget": 126,
+              "prompt": "Key message. \u000bIf the audience reads just this, it will be enough. Make every wor"
+            },
+            {
+              "idx": 21,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.17,
+                "w": 2.5,
+                "h": 0.81
+              },
+              "char_budget": 120,
+              "prompt": "Sub-title"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.98,
+                "w": 2.5,
+                "h": 1.0
+              },
+              "char_budget": 150,
+              "prompt": "Source: TETP"
+            }
+          ]
+        },
+        {
+          "name": "EN Bios",
+          "placeholders": [
+            {
+              "idx": 19,
+              "type": "PICTURE",
+              "rect_in": {
+                "x": 3.33,
+                "y": 0.0,
+                "w": 3.33,
+                "h": 2.91
+              },
+              "char_budget": 560,
+              "prompt": "Click icon to add picture"
+            },
+            {
+              "idx": 20,
+              "type": "PICTURE",
+              "rect_in": {
+                "x": 6.67,
+                "y": 0.0,
+                "w": 3.33,
+                "h": 2.91
+              },
+              "char_budget": 560,
+              "prompt": "Click icon to add picture"
+            },
+            {
+              "idx": 21,
+              "type": "PICTURE",
+              "rect_in": {
+                "x": 10.0,
+                "y": 0.0,
+                "w": 3.33,
+                "h": 2.91
+              },
+              "char_budget": 560,
+              "prompt": "Click icon to add picture"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 3.75,
+                "y": 3.33,
+                "w": 2.5,
+                "h": 3.33
+              },
+              "char_budget": 480,
+              "prompt": "Name and Surname\nJob title and location second level\nSummary of experience third"
+            },
+            {
+              "idx": 23,
+              "type": "BODY",
+              "rect_in": {
+                "x": 7.08,
+                "y": 3.33,
+                "w": 2.5,
+                "h": 3.33
+              },
+              "char_budget": 480,
+              "prompt": "Name and Surname\nJob title and location second level\nSummary of experience third"
+            },
+            {
+              "idx": 24,
+              "type": "BODY",
+              "rect_in": {
+                "x": 10.42,
+                "y": 3.33,
+                "w": 2.5,
+                "h": 3.33
+              },
+              "char_budget": 480,
+              "prompt": "Name and Surname\nJob title and location second level\nSummary of experience third"
+            },
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 0.42,
+                "w": 2.5,
+                "h": 2.42
+              },
+              "char_budget": 126,
+              "prompt": "Key message. \u000bIf the audience reads just this, it will be enough. Make every wor"
+            },
+            {
+              "idx": 25,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.17,
+                "w": 2.5,
+                "h": 0.81
+              },
+              "char_budget": 120,
+              "prompt": "Sub-title"
+            },
+            {
+              "idx": 26,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.98,
+                "w": 2.5,
+                "h": 1.0
+              },
+              "char_budget": 150,
+              "prompt": "Source: TETP"
+            }
+          ]
+        },
+        {
+          "name": "EN Case Study",
+          "placeholders": [
+            {
+              "idx": 16,
+              "type": "BODY",
+              "rect_in": {
+                "x": 3.75,
+                "y": 0.42,
+                "w": 4.17,
+                "h": 0.39
+              },
+              "char_budget": 50,
+              "prompt": "Situation"
+            },
+            {
+              "idx": 24,
+              "type": "BODY",
+              "rect_in": {
+                "x": 3.75,
+                "y": 4.17,
+                "w": 4.17,
+                "h": 0.41
+              },
+              "char_budget": 100,
+              "prompt": "Approach"
+            },
+            {
+              "idx": 25,
+              "type": "BODY",
+              "rect_in": {
+                "x": 8.75,
+                "y": 4.17,
+                "w": 4.17,
+                "h": 0.41
+              },
+              "char_budget": 100,
+              "prompt": "Impact"
+            },
+            {
+              "idx": 26,
+              "type": "BODY",
+              "rect_in": {
+                "x": 3.75,
+                "y": 4.58,
+                "w": 4.17,
+                "h": 1.19
+              },
+              "char_budget": 250,
+              "prompt": "Click to edit Master text styles\nSecond level\nThird level\nFourth level\nFifth lev"
+            },
+            {
+              "idx": 27,
+              "type": "BODY",
+              "rect_in": {
+                "x": 8.75,
+                "y": 4.58,
+                "w": 4.17,
+                "h": 1.19
+              },
+              "char_budget": 250,
+              "prompt": "Click to edit Master text styles\nSecond level\nThird level\nFourth level\nFifth lev"
+            },
+            {
+              "idx": 28,
+              "type": "BODY",
+              "rect_in": {
+                "x": 3.75,
+                "y": 0.84,
+                "w": 4.17,
+                "h": 1.19
+              },
+              "char_budget": 250,
+              "prompt": "Click to edit Master text styles\nSecond level\nThird level\nFourth level\nFifth lev"
+            },
+            {
+              "idx": 23,
+              "type": "PICTURE",
+              "rect_in": {
+                "x": 8.33,
+                "y": -0.0,
+                "w": 5.0,
+                "h": 3.75
+              },
+              "char_budget": 1080,
+              "prompt": "Click icon to add picture"
+            },
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 0.42,
+                "w": 2.5,
+                "h": 2.42
+              },
+              "char_budget": 126,
+              "prompt": "Key message. \u000bIf the audience reads just this, it will be enough. Make every wor"
+            },
+            {
+              "idx": 20,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.17,
+                "w": 2.5,
+                "h": 0.81
+              },
+              "char_budget": 120,
+              "prompt": "Sub-title"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 4.98,
+                "w": 2.5,
+                "h": 1.0
+              },
+              "char_budget": 150,
+              "prompt": "Source: TETP"
+            }
+          ]
+        },
+        {
+          "name": "Title Only",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 0.42,
+                "w": 2.5,
+                "h": 2.42
+              },
+              "char_budget": 126,
+              "prompt": "Key message. \u000bIf the audience reads just this, it will be enough. Make every wor"
+            }
+          ]
+        },
+        {
+          "name": "EN Wide",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 0.42,
+                "y": 0.42,
+                "w": 8.75,
+                "h": 0.62
+              },
+              "char_budget": 64,
+              "prompt": "Key message. If the audience reads just this, it will be enough. Make every word"
+            },
+            {
+              "idx": 20,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.42,
+                "y": 2.09,
+                "w": 3.75,
+                "h": 0.81
+              },
+              "char_budget": 180,
+              "prompt": "Sub-title"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "language": "ar",
+      "layouts": [
+        {
+          "name": "TETP AR Cover",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "CENTER_TITLE",
+              "rect_in": {
+                "x": 7.08,
+                "y": 0.42,
+                "w": 5.83,
+                "h": 1.25
+              },
+              "char_budget": 129,
+              "prompt": "What are you here \u000bto say? Set the tone."
+            },
+            {
+              "idx": 1,
+              "type": "SUBTITLE",
+              "rect_in": {
+                "x": 7.08,
+                "y": 2.91,
+                "w": 5.83,
+                "h": 1.67
+              },
+              "char_budget": 560,
+              "prompt": "Add supporting detail"
+            },
+            {
+              "idx": 15,
+              "type": "BODY",
+              "rect_in": {
+                "x": 8.58,
+                "y": 5.21,
+                "w": 4.34,
+                "h": 0.21
+              },
+              "char_budget": 52,
+              "prompt": "Date here"
+            },
+            {
+              "idx": 12,
+              "type": "BODY",
+              "rect_in": {
+                "x": 8.58,
+                "y": 4.97,
+                "w": 4.34,
+                "h": 0.21
+              },
+              "char_budget": 52,
+              "prompt": "Report type here"
+            }
+          ]
+        },
+        {
+          "name": "TETP AR Agenda",
+          "placeholders": [
+            {
+              "idx": 10,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.41,
+                "y": 1.0,
+                "w": 12.51,
+                "h": 5.84
+              },
+              "char_budget": 4379,
+              "prompt": "Chapter heading"
+            }
+          ]
+        },
+        {
+          "name": "TETP AR Vertical",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 10.42,
+                "y": 0.42,
+                "w": 2.5,
+                "h": 2.42
+              },
+              "char_budget": 126,
+              "prompt": "Key message. \u000bIf the audience reads just this, it will be enough. Make every wor"
+            },
+            {
+              "idx": 20,
+              "type": "BODY",
+              "rect_in": {
+                "x": 10.42,
+                "y": 4.17,
+                "w": 2.5,
+                "h": 0.81
+              },
+              "char_budget": 120,
+              "prompt": "Sub-title"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 10.42,
+                "y": 4.98,
+                "w": 2.5,
+                "h": 1.0
+              },
+              "char_budget": 150,
+              "prompt": "Source: TETP"
+            }
+          ]
+        },
+        {
+          "name": "TETP AR Horizontal",
+          "placeholders": [
+            {
+              "idx": 0,
+              "type": "TITLE",
+              "rect_in": {
+                "x": 3.33,
+                "y": 0.43,
+                "w": 9.58,
+                "h": 0.61
+              },
+              "char_budget": 70,
+              "prompt": "رسالة اساسية. إذا قرأ الجمهور هذا فقط ، فسيكون ذلك كافياً. اجعل لكل كلمة قيمة.\u000bق"
+            },
+            {
+              "idx": 10,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.43,
+                "y": 1.51,
+                "w": 12.49,
+                "h": 5.57
+              },
+              "char_budget": 4228,
+              "prompt": "هذا هو المكان الذي تقدم فيه قضيتك بالأدلة والمعلومات ذات الصلة. اجعل الجمل موجزة"
+            },
+            {
+              "idx": 22,
+              "type": "BODY",
+              "rect_in": {
+                "x": 7.1,
+                "y": 7.1,
+                "w": 5.82,
+                "h": 0.26
+              },
+              "char_budget": 70,
+              "prompt": "المصدر: برنامج تكامل"
+            },
+            {
+              "idx": 23,
+              "type": "BODY",
+              "rect_in": {
+                "x": 0.43,
+                "y": 1.15,
+                "w": 12.49,
+                "h": 0.24
+              },
+              "char_budget": 151,
+              "prompt": "Sub-Header"
+            }
+          ]
+        },
+        {
+          "name": "TETP AR End Page",
+          "placeholders": []
+        }
+      ]
+    }
+  ]
+}
