@@ -54,6 +54,12 @@ python3 scripts/list_library_slots.py                    # available prototypes
 python3 scripts/list_library_slots.py delivery_tracker   # its slots
 ```
 
+Before filling a prototype, open its annotated slot map: `references/slotmaps/<name>.png`
+shows each slot's marker in position and `references/slotmaps/SLOTMAPS.md` maps
+markers to shape names and original text. Regenerate with
+`python3 scripts/build_slot_maps.py` after library changes (output is
+gitignored; rebuild it in sessions that have the library files).
+
 ```yaml
 - type: library
   prototype: delivery_tracker
